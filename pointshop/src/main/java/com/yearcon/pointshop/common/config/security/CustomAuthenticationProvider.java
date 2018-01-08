@@ -1,6 +1,5 @@
 package com.yearcon.pointshop.common.config.security;
 
-import com.yearcon.pointshop.common.exception.ShopUserException;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

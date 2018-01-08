@@ -3,11 +3,15 @@ package com.yearcon.pointshop.common.config.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.security.authentication.CredentialsExpiredException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,15 +24,18 @@ import java.util.List;
  * @author itguang
  * @create 2018-01-06 15:01
  **/
+
 public class TokenAuthenticationService {
+
 
     /**
      * 过期时间 2小时
      */
     static final long EXPIRATIONTIME = 1000 * 60 * 60 * 2;
     /**
-     * JWT 密码
+     * JWT 加密密钥
      */
+    @Value("${SECRET}")
     static final String SECRET = "www.yearcon.cn";
     /**
      * TOKEN前缀
@@ -37,12 +44,15 @@ public class TokenAuthenticationService {
     /**
      * 存放Token的Header Key
      */
+    @Value("${HEADER_STRING}")
     static final String HEADER_STRING = "token";
 
     /**
      * 自定义的 playload
      */
     static final String AUTHORITIES = "authorities";
+
+
 
     /**
      * 将jwt token 写入header头部

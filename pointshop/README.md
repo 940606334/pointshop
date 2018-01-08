@@ -5,5 +5,5 @@
 
 * 使用 mysql , oracle 多数据源(Spring Data Jpa)
 
-* 增加安全认证,使用jwt和Spring Security
+* 增加安全认证,使用jwt和Spring Security(注意和Swagger整合时静态页面的拦截问题)
 

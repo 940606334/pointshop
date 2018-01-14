@@ -32,7 +32,7 @@ public class JWTAuthenticationFilter extends BasicAuthenticationFilter {
 
 
     /**
-     * 在此方法中检验客户端请求头中的token,
+     * 从请求头和Cookie中解析出 token
      * 如果存在并合法,就把token中的信息封装到 Authentication 类型的对象中,
      * 最后使用  SecurityContextHolder.getContext().setAuthentication(authentication); 改变或删除当前已经验证的 pricipal
      *
@@ -44,7 +44,7 @@ public class JWTAuthenticationFilter extends BasicAuthenticationFilter {
      */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-        Authentication authentication = TokenAuthenticationService.getAuthentication(request);
+        Authentication authentication = TokenAuthenticationService.getAuthentication(request, response);
 
         //判断是否有token
         if (authentication == null) {
@@ -57,8 +57,6 @@ public class JWTAuthenticationFilter extends BasicAuthenticationFilter {
 
         //放行
         chain.doFilter(request, response);
-
-
     }
 
 

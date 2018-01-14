@@ -1,8 +1,6 @@
 package com.yearcon.pointshop.common.config.security;
 
 import com.yearcon.pointshop.common.fliter.JWTAuthenticationFilter;
-import com.yearcon.pointshop.common.fliter.JWTLoginFilter;
-import com.yearcon.pointshop.common.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -28,10 +26,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    @Autowired
-    private UserDetailsServiceImpl userDetailsService;
-
-
     /**
      * 允许下面的请求匿名访问
      *
@@ -42,8 +36,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         web.ignoring().antMatchers(
                 //测试hello
                 "/user/hello",
-                // 注册页面
-                "/user/signUp",
+                //微信认证的url
+                "/weixin/**",
+                // 注册
+                "/user/register",
+                //发送验证码
+                "/user/sendCode/**",
                 //swagger的静态页面
                 "/webjars/**",
                 //swagger api json
@@ -57,7 +55,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 //swagger首页
                 "/swagger-ui.html",
                 //以下是标准的web页面目录
-                "/**/*.html",
+                "/*.html",
                 "/js/**",
                 "/css/**",
                 "/images/**",
@@ -65,12 +63,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
 
-    @Override
-    public void configure(AuthenticationManagerBuilder auth) {
 
-        // 使用自定义身份验证组件
-        auth.authenticationProvider(new CustomAuthenticationProvider(userDetailsService, bCryptPasswordEncoder));
-    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -78,8 +71,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.cors().and().csrf().disable().authorizeRequests()
                 .anyRequest().authenticated()
                 .and()
-                //添加过滤器,拦截登陆url
-                .addFilterBefore(new JWTLoginFilter("/user/login", authenticationManager()), UsernamePasswordAuthenticationFilter.class)
                 //添加过滤器,拦截所有需要认证的url,验证token
                 .addFilterBefore(new JWTAuthenticationFilter(authenticationManager()), UsernamePasswordAuthenticationFilter.class);
     }

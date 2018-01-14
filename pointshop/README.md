@@ -7,3 +7,4 @@
 
 * 增加安全认证,使用jwt和Spring Security(注意和Swagger整合时静态页面的拦截问题)
 
+* 使用 SpringBoot 自带的定时任务进行crm各店铺的数据同步.

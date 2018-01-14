@@ -1,8 +1,15 @@
 package com.yearcon.pointshop.common.config.security;
 
+import com.yearcon.pointshop.common.enums.ResultEnum;
+import com.yearcon.pointshop.common.exception.ShopException;
+import com.yearcon.pointshop.common.utils.CookieUtil;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -13,8 +20,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -29,9 +38,9 @@ public class TokenAuthenticationService {
 
 
     /**
-     * 过期时间 2小时
+     * 过期时间 24 小时
      */
-    static final long EXPIRATIONTIME = 1000 * 60 * 60 * 2;
+    static final long EXPIRATIONTIME = 1000 * 60 * 60 * 24;
     /**
      * JWT 加密密钥
      */
@@ -40,7 +49,7 @@ public class TokenAuthenticationService {
     /**
      * TOKEN前缀
      */
-    static final String TOKEN_PREFIX = "Bearer ";
+    static final String TOKEN_PREFIX = "Bearer_";
     /**
      * 存放Token的Header Key
      */
@@ -53,26 +62,18 @@ public class TokenAuthenticationService {
     static final String AUTHORITIES = "authorities";
 
 
-
     /**
-     * 将jwt token 写入header头部
+     * 将jwt token 写入header头部 和 cookie 中
      *
      * @param response
-     * @param authResult
+     * @param openid   微信用户凭据 openId
      */
-    public static void addAuthenticatiotoHttpHeader(HttpServletResponse response, Authentication authResult) {
-
-        //得到以 , 分割的权限字符串
-        String auth= authResult.getAuthorities().toString();
-        //得到 权限 列表
-        //List<? extends GrantedAuthority> authorities = (List<? extends GrantedAuthority>) authResult.getAuthorities();
+    public static void addToken2Cookie(HttpServletResponse response, String openid) {
 
 
         //生成 jwt
         String token = Jwts.builder()
-                //生成token的时候可以把自定义数据加进去,比如用户权限,注意这里之所以不存对象,是为了减少颁发给客户端token的长度.
-                .claim(AUTHORITIES, auth)
-                .setSubject(authResult.getName())
+                .setSubject(openid)
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATIONTIME))
                 .signWith(SignatureAlgorithm.HS512, SECRET)
                 .compact();
@@ -80,34 +81,60 @@ public class TokenAuthenticationService {
         //把token设置到响应头中去
         response.addHeader(HEADER_STRING, TOKEN_PREFIX + token);
 
+        //把token设置到 cookie 中去,并且设置cookie的过期时间和token的过期时间相同
+        CookieUtil.set(response, HEADER_STRING, TOKEN_PREFIX + token, new Long(EXPIRATIONTIME / 1000).intValue());
+        //为了方便客户段取得 openid ,再把openid 放到 cookie中
+        CookieUtil.set(response, "openid", openid, new Long(EXPIRATIONTIME / 1000).intValue());
+
     }
 
     /**
-     * 从请求头中解析出 Authentication
+     * 从请求头和Cookie中解析出 token
+     *
      * @param request
+     * @param response
      * @return
      */
-    public static Authentication getAuthentication(HttpServletRequest request) {
-        // 从Header中拿到token
-        String token = request.getHeader(HEADER_STRING);
-        if(token==null){
-            return null;
+    public static Authentication getAuthentication(HttpServletRequest request, HttpServletResponse response) {
 
+        String token = null;
+        // 从Header中拿到token
+        token = request.getHeader(HEADER_STRING);
+        Cookie cookie = CookieUtil.get(request, HEADER_STRING);
+        if (cookie != null) {
+            token = cookie.getValue();
         }
 
 
-        Claims claims = Jwts.parser().setSigningKey(SECRET)
-                .parseClaimsJws(token.replace(TOKEN_PREFIX, ""))
-                .getBody();
+        if (token == null) {
+            return null;
+        }
 
-        String auth = (String)claims.get(AUTHORITIES);
 
-        // 得到 权限（角色）
-        List<GrantedAuthority> authorities =  AuthorityUtils.
-                commaSeparatedStringToAuthorityList((String) claims.get(AUTHORITIES));
+        Claims claims = null;
+        try {
+            claims = Jwts.parser().setSigningKey(SECRET)
+                    .parseClaimsJws(token.replace(TOKEN_PREFIX, ""))
+                    .getBody();
+        } catch (ExpiredJwtException e) {
+//            e.printStackTrace();
+            throw new ShopException(ResultEnum.EXPIREDJWTEXCEPTION);
+        } catch (UnsupportedJwtException e) {
+            e.printStackTrace();
+            throw new ShopException(ResultEnum.SIGNATUREEXCEPTION);
+        } catch (MalformedJwtException e) {
+            e.printStackTrace();
+        } catch (SignatureException e) {
+            e.printStackTrace();
+            throw new ShopException(ResultEnum.SIGNATUREEXCEPTION);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            throw new ShopException(ResultEnum.SIGNATUREEXCEPTION);
+        }
 
-        //得到用户名
-        String username = claims.getSubject();
+
+        //得到 openid
+        String openid = claims.getSubject();
 
         //得到过期时间
         Date expiration = claims.getExpiration();
@@ -117,12 +144,12 @@ public class TokenAuthenticationService {
 
         if (now.getTime() > expiration.getTime()) {
 
-            throw new CredentialsExpiredException("该账号已过期,请重新登陆");
+            throw new ShopException(ResultEnum.EXPIREDJWTEXCEPTION);
         }
 
 
-        if (username != null) {
-            return new UsernamePasswordAuthenticationToken(username, null, authorities);
+        if (openid != null) {
+            return new UsernamePasswordAuthenticationToken(openid, null, Collections.emptyList());
         }
         return null;
 

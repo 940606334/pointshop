@@ -2,20 +2,19 @@ package com.yearcon.pointshop.common.exception;
 
 import com.yearcon.pointshop.common.enums.ResultEnum;
 import lombok.Data;
-import org.springframework.security.core.AuthenticationException;
 
 /**
  * @author itguang
- * @create 2018-01-06 14:31
+ * @create 2018-01-10 13:49
  **/
 @Data
-public class ShopUserException extends AuthenticationException {
-
+public class ShopException extends RuntimeException {
 
     private Integer code;
 
-    public ShopUserException(ResultEnum resultEnum) {
+    public ShopException(ResultEnum resultEnum) {
         super(resultEnum.getMsg());
         this.code = resultEnum.getCode();
+
     }
 }

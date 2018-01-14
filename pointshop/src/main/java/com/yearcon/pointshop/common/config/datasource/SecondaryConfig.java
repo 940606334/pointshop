@@ -26,7 +26,7 @@ import java.util.Map;
 @EnableJpaRepositories(
         entityManagerFactoryRef="entityManagerFactorySecondary",
         transactionManagerRef="transactionManagerSecondary",
-        basePackages= { "com.yearcon.pointshop.common.repository.oracle" })
+        basePackages= {"com.yearcon.pointshop.common.repository.crm"})
 public class SecondaryConfig {
 
     @Autowired

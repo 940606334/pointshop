@@ -7,6 +7,10 @@ public enum ResultEnum {
 
     SUCCESS(1,"成功"),
     PHONE_NOT_EXIST(2,"手机号还未注册"),
+    SIGNIN_TIME_FULL(3,"本周签到次数已达上线"),
+
+
+    UNKNOW_ERROR(-1,"未知错误"),
 
     SIGNATUREEXCEPTION(100,"校验token失败"),
     EXPIREDJWTEXCEPTION(101,"token已过期,请重新登陆"),
@@ -24,6 +28,8 @@ public enum ResultEnum {
     PAY_PWD_ERROR(113,"支付失败,支付密码错误"),
     PAY_POINT_NOT_ENOUGH_ERROR(114,"支付失败,积分不足"),
     SAVE_CUSTOMER_FAIL(115,"保存用户信息失败"),
+    SAVE_SIGNIN_POINT_FAIL(116,"保存签到信息失败"),
+    SIGNIN_FAIL(117,"今天已经签到过了"),
 
 
 

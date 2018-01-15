@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -26,6 +27,17 @@ public class ShopProductController {
 
     @Autowired
     ShopProductService shopProductService;
+
+
+    @ApiOperation(value = "获取商品列表", notes = "分页形式获取商品列表")
+    @RequestMapping(value = "/list", method = RequestMethod.POST)
+    public ShopResult<List<ShopProductEntity>> findAll(@ApiParam(value = "起始页") @RequestParam(value = "startPage", defaultValue = "1") Integer startPage,
+                                                       @ApiParam(value = "页大小") @RequestParam(value = "pageSize", defaultValue = "20") Integer pageSize) {
+
+        List<ShopProductEntity> list = shopProductService.findAll(startPage, pageSize);
+
+        return ShopResult.success(list);
+    }
 
 
     @ApiOperation(value = "商品详情", notes = "通过id获取商品详情")

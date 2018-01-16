@@ -23,6 +23,9 @@ public class ShopCustomerEntity {
      * 积分值
      */
     private Integer point;
+    /**
+     * 积分
+     */
     private String openid;
     /**
      * 收货地址
@@ -49,7 +52,13 @@ public class ShopCustomerEntity {
      * 性别
      */
     private String sex;
+    /**
+     * 生日
+     */
     private String birthday;
+    /**
+     * 地址
+     */
     private String address;
     /**
      * 尺寸

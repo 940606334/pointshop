@@ -32,7 +32,6 @@ public class UserVO {
     @ApiModelProperty(value = "当前等级",example = "当前等级")
     private String vipClass;
 
-
     public UserVO(String phone, String username, String headImage, String vipClass) {
         this.phone = phone;
         this.username = username;

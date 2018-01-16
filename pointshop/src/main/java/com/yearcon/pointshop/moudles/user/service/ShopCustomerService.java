@@ -3,6 +3,7 @@ package com.yearcon.pointshop.moudles.user.service;
 import com.yearcon.pointshop.common.enums.ResultEnum;
 import com.yearcon.pointshop.common.exception.ShopException;
 import com.yearcon.pointshop.common.repository.mysql.user.ShopCustomerRepository;
+import com.yearcon.pointshop.common.vo.UserSupplementVO;
 import com.yearcon.pointshop.moudles.user.entity.ShopCustomerEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,7 +43,7 @@ public class ShopCustomerService {
      */
     public ShopCustomerEntity save(ShopCustomerEntity shopCustomerEntity) {
         ShopCustomerEntity one = shopCustomerRepository.save(shopCustomerEntity);
-        if (one==null){
+        if (one == null) {
             throw new ShopException(ResultEnum.SAVE_CUSTOMER_FAIL);
         }
 
@@ -60,6 +61,49 @@ public class ShopCustomerService {
 
         return customerEntity;
 
+    }
+
+    /**
+     * 完善户信息
+     *
+     * @param openid
+     * @param userSupplementVO
+     */
+    public void info(String openid, UserSupplementVO userSupplementVO) {
+
+        ShopCustomerEntity customerEntity = shopCustomerRepository.findByOpenid(openid);
+        if (customerEntity == null) {
+            throw new ShopException(ResultEnum.NOT_EXIST);
+        }
+
+        //设置用户信息
+
+        //设置手机号
+        customerEntity.setPhone(userSupplementVO.getPhone());
+
+        //设置姓名
+        customerEntity.setUsername(userSupplementVO.getUsername());
+
+        //设置淘宝号
+        customerEntity.setTaobaoId(userSupplementVO.getTaobaoId());
+
+        //设置性别
+        customerEntity.setSex(userSupplementVO.getSex());
+
+        //设置生日
+        customerEntity.setBirthday(userSupplementVO.getBirthday());
+
+        //设置地址
+        customerEntity.setAddress(userSupplementVO.getAddress());
+
+        //设置尺码
+        customerEntity.setSize(userSupplementVO.getSize());
+
+        ShopCustomerEntity save = shopCustomerRepository.save(customerEntity);
+        if (save == null) {
+            throw new ShopException(ResultEnum.SAVE_CUSTOMER_FAIL);
+
+        }
     }
 
 

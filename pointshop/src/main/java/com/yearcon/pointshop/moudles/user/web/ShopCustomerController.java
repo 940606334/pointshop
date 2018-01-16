@@ -6,6 +6,7 @@ import com.yearcon.pointshop.common.exception.ShopException;
 import com.yearcon.pointshop.common.utils.HttpClientUtil2;
 import com.yearcon.pointshop.common.utils.RandomCode;
 import com.yearcon.pointshop.common.vo.ShopResult;
+import com.yearcon.pointshop.common.vo.UserSupplementVO;
 import com.yearcon.pointshop.common.vo.UserVO;
 import com.yearcon.pointshop.moudles.crm.entity.ShopCrmEntity;
 import com.yearcon.pointshop.moudles.crm.service.ShopCrmService;
@@ -40,7 +41,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @Api(description = "用户管理")
 @Slf4j
 public class ShopCustomerController {
-
 
 
     @Autowired
@@ -125,16 +125,19 @@ public class ShopCustomerController {
 
     /**
      * 获取用户信息
+     *
      * @param openid
      * @return
      */
-    @ApiOperation(value = "获取用户信息",notes = "通过openid获取用户信息," +
+    @ApiOperation(value = "获取用户信息", notes = "通过openid获取用户信息," +
             "【注意：安全限制】测试时，请在postman中进行，把在微信开发者工具中登陆拿到的token放到请求头或者cookie中，否则验证不通过")
-    @RequestMapping(value = "/getuser/{openid}",method = RequestMethod.GET)
-    public ShopResult<UserVO> getUserByOpenid(@PathVariable(name = "openid") String openid){
+    @RequestMapping(value = "/getuser/{openid}", method = RequestMethod.GET)
+    public ShopResult<UserVO> getUserByOpenid(@PathVariable(name = "openid") String openid) {
 
-        ShopCrmEntity shopCrmEntity = shopCrmService.getByOpenid(openid);
+        //通过opneid 查找
         ShopCustomerEntity shopCustomerEntity = shopCustomerService.findByOpenid(openid);
+        //通过手机号查找
+        ShopCrmEntity shopCrmEntity = shopCrmService.getByOpenid(shopCustomerEntity.getPhone());
 
         UserVO userVO = new UserVO(shopCustomerEntity.getPhone(),
                 shopCustomerEntity.getUsername(),
@@ -146,8 +149,15 @@ public class ShopCustomerController {
     }
 
 
+    @ApiOperation(value = "完善用户信息",notes = "完善用户信息")
+    @RequestMapping(value = "/info/{openid}",method = RequestMethod.POST)
+    public ShopResult info(@PathVariable(value = "openid")String openid, UserSupplementVO userSupplementVO){
+
+        shopCustomerService.info(openid,userSupplementVO);
 
 
+        return ShopResult.success();
+    }
 
 
 

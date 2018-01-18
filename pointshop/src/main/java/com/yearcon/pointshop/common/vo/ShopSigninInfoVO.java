@@ -37,7 +37,7 @@ public class ShopSigninInfoVO {
     /**
      * 签到日期
      */
-    @ApiModelProperty(value = "签到日期")
+    @ApiModelProperty(value = "签到日期",dataType = "java.lang.String")
     private List<LocalDate> dates;
 
 

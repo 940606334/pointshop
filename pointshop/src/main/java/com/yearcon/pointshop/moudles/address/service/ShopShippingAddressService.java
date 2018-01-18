@@ -5,6 +5,8 @@ import com.yearcon.pointshop.common.exception.ShopException;
 import com.yearcon.pointshop.common.repository.mysql.address.ShopShippingAddressRepository;
 import com.yearcon.pointshop.common.utils.Identities;
 import com.yearcon.pointshop.moudles.address.entity.ShopShippingAddressEntity;
+import com.yearcon.pointshop.moudles.user.entity.ShopCustomerEntity;
+import com.yearcon.pointshop.moudles.user.service.ShopCustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +24,9 @@ public class ShopShippingAddressService {
 
     @Autowired
     ShopShippingAddressRepository shippingAddressRepository;
+
+    @Autowired
+    ShopCustomerService shopCustomerService;
 
 
     public ShopShippingAddressEntity findOne(String id) {
@@ -54,7 +59,7 @@ public class ShopShippingAddressService {
 
 
     /**
-     * 保存/修改 收货地址
+     * 保存 收货地址
      *
      * @param entity
      */
@@ -67,6 +72,25 @@ public class ShopShippingAddressService {
 
 
     }
+
+    /**
+     * 修改 收货地址
+     *
+     * @param entity
+     */
+    @Transactional(rollbackFor = RuntimeException.class)
+    public void update(ShopShippingAddressEntity entity) {
+
+
+        //  ShopCustomerEntity customerEntity = shopCustomerService.findByOpenid(entity.getOpenid());
+
+        // entity.setCustomerId(customerEntity.getId());
+
+        ShopShippingAddressEntity shippingAddressEntity = shippingAddressRepository.save(entity);
+
+
+    }
+
 
     /**
      * 通过 收货地址id 删除该地址
@@ -99,21 +123,17 @@ public class ShopShippingAddressService {
         //重新设置默认地址,设置之前要把之前的默认地址取消掉
         ShopShippingAddressEntity shippingAddressEntity = shippingAddressRepository.findOne(addressId);
 
-        String customerId = shippingAddressEntity.getCustomerId();
-        List<ShopShippingAddressEntity> list = shippingAddressRepository.findAllByCustomerId(customerId);
-        List<ShopShippingAddressEntity> entities = list.stream()
-                .filter(entity -> entity.getIsDefault() == 1)
-                .collect(toList());
+        ShopShippingAddressEntity defaultEntity = shippingAddressRepository.findAllByIsDefault(1);
 
-        ShopShippingAddressEntity defaultEntity = entities.get(0);
-        if (defaultEntity != null) {
+        if(defaultEntity!=null){
+
             defaultEntity.setIsDefault(0);
-            save(defaultEntity);
-
+            update(defaultEntity);
         }
 
+
         shippingAddressEntity.setIsDefault(1);
-        shippingAddressRepository.save(shippingAddressEntity);
+        update(shippingAddressEntity);
 
     }
 }

@@ -3,6 +3,7 @@ package com.yearcon.pointshop.moudles.user.web;
 import com.yearcon.pointshop.common.config.security.TokenAuthenticationService;
 import com.yearcon.pointshop.common.enums.ResultEnum;
 import com.yearcon.pointshop.common.exception.ShopException;
+import com.yearcon.pointshop.common.repository.mysql.user.ShopCodeRepository;
 import com.yearcon.pointshop.common.utils.HttpClientUtil2;
 import com.yearcon.pointshop.common.utils.RandomCode;
 import com.yearcon.pointshop.common.vo.ShopResult;
@@ -10,13 +11,17 @@ import com.yearcon.pointshop.common.vo.UserSupplementVO;
 import com.yearcon.pointshop.common.vo.UserVO;
 import com.yearcon.pointshop.moudles.crm.entity.ShopCrmEntity;
 import com.yearcon.pointshop.moudles.crm.service.ShopCrmService;
+import com.yearcon.pointshop.moudles.user.entity.ShopCodeEntity;
+import com.yearcon.pointshop.moudles.user.entity.ShopConfigEntity;
 import com.yearcon.pointshop.moudles.user.entity.ShopCustomerEntity;
 import com.yearcon.pointshop.moudles.user.service.ShopCustomerService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -24,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.net.URISyntaxException;
@@ -49,6 +55,10 @@ public class ShopCustomerController {
     @Autowired
     ShopCrmService shopCrmService;
 
+
+
+
+
     /**
      * 发送手机验证码
      *
@@ -68,7 +78,7 @@ public class ShopCustomerController {
         Map<String, Object> map = new HashMap<>();
         map.put("userId", "H11868");
         map.put("password", "332516");
-        map.put("pszMobis", "17638166573");
+        map.put("pszMobis",phone);
         map.put("pszMsg", "您正在注册意尔康会员，验证码是：" + code);
         map.put("iMobiCount", "1");
         map.put("pszSubPort", "*");
@@ -85,8 +95,10 @@ public class ShopCustomerController {
 
         log.info("response====={}", s);
 
-        //把验证码保存起来,这里存放到session中
-        httpSession.setAttribute("code", code);
+        //把验证码保存起来,这里存放数据库中
+
+        shopCustomerService.saveShopCodeEntity(phone,code);
+
 
         return ShopResult.success();
     }
@@ -105,10 +117,13 @@ public class ShopCustomerController {
                                @ApiParam(value = "手机号", required = true) @RequestParam(name = "phone") String phone,
                                @ApiParam(value = "验证码", required = true) @RequestParam(name = "code") String code,
                                HttpServletResponse response,
+                               HttpServletRequest request,
                                HttpSession httpSession) {
 
-        String SessionCode = (String) httpSession.getAttribute("code");
-        if (!code.equals(SessionCode)) {
+
+        String dbCode = shopCustomerService.findByPhone(phone);
+
+        if (!code.equals(dbCode)) {
             throw new ShopException(ResultEnum.CHECK_CODE_FAILE);
         }
 
@@ -119,7 +134,7 @@ public class ShopCustomerController {
         shopCustomerService.save(shopCustomerEntity);
 
         //绑定手机号成功, 把 token 和 openid 放入 Cookie 中
-        TokenAuthenticationService.addToken2Cookie(response, openid);
+        TokenAuthenticationService.addToken2Cookie(request,response, openid);
         return ShopResult.success();
     }
 
@@ -129,20 +144,24 @@ public class ShopCustomerController {
      * @param openid
      * @return
      */
-    @ApiOperation(value = "获取用户信息", notes = "通过openid获取用户信息," +
-            "【注意：安全限制】测试时，请在postman中进行，把在微信开发者工具中登陆拿到的token放到请求头或者cookie中，否则验证不通过")
+    @ApiOperation(value = "获取用户信息", notes = "通过openid获取用户信息,")
     @RequestMapping(value = "/getuser/{openid}", method = RequestMethod.GET)
-    public ShopResult<UserVO> getUserByOpenid(@PathVariable(name = "openid") String openid) {
+    public ShopResult<UserVO> getUserByOpenid(@PathVariable(name = "openid") String openid,
+                                              HttpServletRequest request) {
 
         //通过opneid 查找
         ShopCustomerEntity shopCustomerEntity = shopCustomerService.findByOpenid(openid);
+        ShopConfigEntity shopConfigEntity = shopCustomerService.getShopConfigEntity();
         //通过手机号查找
-        ShopCrmEntity shopCrmEntity = shopCrmService.getByOpenid(shopCustomerEntity.getPhone());
+        ShopCrmEntity shopCrmEntity = shopCrmService.getByOpenid(openid);
 
         UserVO userVO = new UserVO(shopCustomerEntity.getPhone(),
                 shopCustomerEntity.getUsername(),
                 shopCustomerEntity.getHeadImage(),
-                shopCrmEntity.getVipClass());
+                shopCrmEntity.getVipClass(),
+                shopCustomerEntity.getPoint(),
+                shopConfigEntity.getCardUrl(),
+                shopConfigEntity.getVipExplain());
 
 
         return ShopResult.success(userVO);
@@ -154,10 +173,19 @@ public class ShopCustomerController {
     public ShopResult info(@PathVariable(value = "openid")String openid, UserSupplementVO userSupplementVO){
 
         shopCustomerService.info(openid,userSupplementVO);
-
-
         return ShopResult.success();
     }
+
+    @ApiModelProperty(value = "获取用户表信息",notes = "通过openid获取用户表信息")
+    @RequestMapping(value = "/getUserInfo/{openid}",method = RequestMethod.GET)
+    public ShopResult<ShopCustomerEntity> getOne(@PathVariable("openid") String openid){
+
+        ShopCustomerEntity customerEntity = shopCustomerService.findByOpenid(openid);
+
+        return ShopResult.success(customerEntity);
+    }
+
+
 
 
 

@@ -32,10 +32,28 @@ public class UserVO {
     @ApiModelProperty(value = "当前等级",example = "当前等级")
     private String vipClass;
 
-    public UserVO(String phone, String username, String headImage, String vipClass) {
+    @ApiModelProperty(value = "积分")
+    private Integer point;
+
+    /**
+     * 卡券地址
+     */
+    @ApiModelProperty(value = "卡券地址")
+    private String cardUrl;
+    /**
+     * vip特权
+     */
+    @ApiModelProperty(value = "vip特权")
+    private String vipExplain;
+
+
+    public UserVO(String phone, String username, String headImage, String vipClass, Integer point, String cardUrl, String vipExplain) {
         this.phone = phone;
         this.username = username;
         this.headImage = headImage;
         this.vipClass = vipClass;
+        this.point = point;
+        this.cardUrl = cardUrl;
+        this.vipExplain = vipExplain;
     }
 }

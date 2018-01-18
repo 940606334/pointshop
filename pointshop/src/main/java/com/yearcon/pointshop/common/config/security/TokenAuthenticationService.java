@@ -38,9 +38,9 @@ public class TokenAuthenticationService {
 
 
     /**
-     * 过期时间 24 小时
+     * 过期时间 24 小时 *30
      */
-    static final long EXPIRATIONTIME = 1000 * 60 * 60 * 24;
+    static final long EXPIRATIONTIME = 1000 * 60 * 60 * 24*30;
     /**
      * JWT 加密密钥
      */
@@ -54,7 +54,7 @@ public class TokenAuthenticationService {
      * 存放Token的Header Key
      */
     @Value("${HEADER_STRING}")
-    static final String HEADER_STRING = "token";
+   public static final String HEADER_STRING = "token";
 
     /**
      * 自定义的 playload
@@ -68,7 +68,7 @@ public class TokenAuthenticationService {
      * @param response
      * @param openid   微信用户凭据 openId
      */
-    public static void addToken2Cookie(HttpServletResponse response, String openid) {
+    public static void addToken2Cookie(HttpServletRequest request,HttpServletResponse response, String openid) {
 
 
         //生成 jwt
@@ -82,9 +82,11 @@ public class TokenAuthenticationService {
         response.addHeader(HEADER_STRING, TOKEN_PREFIX + token);
 
         //把token设置到 cookie 中去,并且设置cookie的过期时间和token的过期时间相同
-        CookieUtil.set(response, HEADER_STRING, TOKEN_PREFIX + token, new Long(EXPIRATIONTIME / 1000).intValue());
+        CookieUtil.set(request,response, HEADER_STRING, TOKEN_PREFIX + token, new Long(EXPIRATIONTIME / 1000).intValue());
         //为了方便客户段取得 openid ,再把openid 放到 cookie中
-        CookieUtil.set(response, "openid", openid, new Long(EXPIRATIONTIME / 1000).intValue());
+        CookieUtil.set(request,response, "openid", openid, new Long(EXPIRATIONTIME / 1000).intValue());
+
+
 
     }
 

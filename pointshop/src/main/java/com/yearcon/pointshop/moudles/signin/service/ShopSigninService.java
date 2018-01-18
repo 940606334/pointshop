@@ -15,8 +15,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.sql.Date;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -49,7 +55,9 @@ public class ShopSigninService {
      * @param pageSize  页大小
      * @return
      */
-    public List<ShopSigninEntity> findAll(Integer startPage, Integer pageSize) {
+    public List<ShopSigninEntity> findAll(Integer startPage, Integer pageSize,String openid) {
+
+        ShopCustomerEntity customerEntity = shopCustomerService.findByOpenid(openid);
 
         // 按签到时间降序排序
         Sort.Order order = new Sort.Order(Sort.Direction.DESC, "sginDate");
@@ -57,7 +65,25 @@ public class ShopSigninService {
 
         Pageable pageable = new PageRequest(startPage - 1, pageSize, sort);
 
-        Page<ShopSigninEntity> page = shopSigninRepository.findAll(pageable);
+
+        /**
+         * root:就是我们要查询的类型 ProductInfoEntity
+         * query: 查询条件
+         * cb: 构建Predicate(断言)
+         *
+         */
+        Specification<ShopSigninEntity> specification = new Specification<ShopSigninEntity>(){
+            @Override
+            public Predicate toPredicate(Root<ShopSigninEntity> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                Path path = root.get("customerId");
+                //查询条件:价格大于100
+                Predicate predicate = cb.equal(path, customerEntity.getId());
+
+                return predicate;
+            }
+        };
+
+        Page<ShopSigninEntity> page = shopSigninRepository.findAll(specification,pageable);
         List<ShopSigninEntity> list = page.getContent();
 
         return list;
@@ -210,6 +236,44 @@ public class ShopSigninService {
 
 
     /**
+     * 通过openid获取该用户本月签到日期列表
+     * @param openid
+     * @return
+     */
+    public List<LocalDate> getSigninDateList(String openid){
+
+        ShopCustomerEntity customerEntity = shopCustomerService.findByOpenid(openid);
+
+        String customerId = customerEntity.getId();
+
+        LocalDate now = LocalDate.now();
+        int dayOfMonth = now.getDayOfMonth();
+        int lengthOfMonth = now.lengthOfMonth();
+
+        LocalDate start = now.minusDays(dayOfMonth - 1);
+        LocalDate end = now.plusDays(lengthOfMonth - dayOfMonth);
+
+
+        List<ShopSigninEntity> list = shopSigninRepository.
+                findAllByCustomerIdAndSginDateBetweenOrderBySginDateAsc(customerId, Date.valueOf(start), Date.valueOf(end));
+
+        //总积分
+        Integer sum = list.stream().map(ShopSigninEntity::getSignPoint).reduce(0, Integer::sum);
+
+        //本月签到日期
+        List<LocalDate> dates = list.stream()
+                .map(ShopSigninEntity::getSginDate)
+                .map(date -> date.toLocalDate())
+                .collect(toList());
+
+
+        return dates;
+
+
+    }
+
+
+    /**
      * 获取签到信息
      *
      * @param openid
@@ -266,12 +330,21 @@ public class ShopSigninService {
 
     /**
      * 计算本月连续签到天数
+     *
      * @param dates
      * @return
      */
     public Integer getdaysOfMonth(List<LocalDate> dates) {
 
         int number = 0;
+
+        if (dates.size() == 0) {
+            return 0;
+        }
+
+        if (dates.size() == 1) {
+            return 1;
+        }
 
 
         for (int i = 0; i < dates.size() - 1; i++) {

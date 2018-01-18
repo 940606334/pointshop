@@ -21,6 +21,7 @@ import me.chanjar.weixin.mp.bean.result.WxMpUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -35,6 +36,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author itguang
@@ -65,7 +68,7 @@ public class WeChatController {
     @ApiOperation(value = "微信网页授权", notes = "必须在微信客户端打开此链接. 如果已经注册过手机号则跳转到首页. 没有注册过跳转到注册页面" +
             "返回状态码:1 表示跳转到首页. 返回状态码为: 2 . 表示要跳转到注册页面")
     @RequestMapping(value = "/authorize", method = RequestMethod.GET)
-    public String authorize(HttpServletRequest request) throws UnsupportedEncodingException {
+    public String authorize(HttpServletRequest request, @RequestParam("indexUrl") String indexUrl) throws UnsupportedEncodingException {
 
         //1.得到请求的 服务器域名
         String serverName = request.getServerName();
@@ -79,8 +82,10 @@ public class WeChatController {
 
         String redirectURI = "http://" + serverName + "/shop/weixin/userInfo";
 
+        String index = URLEncoder.encode(indexUrl, "utf-8");
+
         //构造网页授权url
-        String url = wxMpService.oauth2buildAuthorizationUrl(redirectURI, WxConsts.OAUTH2_SCOPE_USER_INFO, null);
+        String url = wxMpService.oauth2buildAuthorizationUrl(redirectURI, WxConsts.OAUTH2_SCOPE_USER_INFO, index);
 
         return "redirect:" + url;
     }
@@ -93,13 +98,16 @@ public class WeChatController {
      */
     @ApiIgnore
     @RequestMapping(value = "/userInfo", method = RequestMethod.GET)
-    @ResponseBody
-    public ShopResult userInfo(HttpServletResponse response,
-                               @RequestParam("code") String code,
-                               @RequestParam("state") String state,
-                               HttpSession httpSession) {
+    public String userInfo(HttpServletResponse response,
+                           HttpServletRequest request,
+                           @RequestParam("code") String code,
+                           @RequestParam("state") String indexUrl,
+                           HttpSession httpSession) {
 
-        log.info("code={},returnUrl={}", code);
+        response.setHeader("Access-Control-Allow-Origin", request.getHeader("Origin"));
+        response.setHeader("Access-Control-Allow-Credentials", "true");
+
+        log.info("code={},indexUrl={}", code, indexUrl);
 
 
         //2.获得accesstoken()
@@ -134,16 +142,24 @@ public class WeChatController {
         httpSession.setAttribute("openid", openid);
 
         // 把 token 和 openid 放入 Cookie 中
-        TokenAuthenticationService.addToken2Cookie(response, openid);
+        TokenAuthenticationService.addToken2Cookie(request, response, openid);
 
         if (StringUtils.isEmpty(shopCustomerEntity.getPhone())) {
             //返回 注册手机号
-            return new ShopResult(ResultEnum.PHONE_NOT_EXIST);
+            String regUrl = indexUrl.replace("index", "reg");
+            return "redirect:" + regUrl + "?" + "openid=" + openid;
         }
 
+        String token = response.getHeader(TokenAuthenticationService.HEADER_STRING);
+
+        HashMap<String, String> map = new HashMap<>();
+        map.put("token", token);
+        map.put("openid", openid);
+
+        indexUrl = indexUrl + "?" + "openid=" + openid + "&token=" + token;
 
         // 返回登陆成功信息
-        return ShopResult.success();
+        return "redirect:" + indexUrl;
     }
 
 

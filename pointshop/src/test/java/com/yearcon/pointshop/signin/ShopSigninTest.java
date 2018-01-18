@@ -39,7 +39,7 @@ public class ShopSigninTest {
     @Test
     public void findAll() {
 
-        List<ShopSigninEntity> list = shopSigninService.findAll(1, 10);
+        List<ShopSigninEntity> list = shopSigninService.findAll(1, 10,"666");
 
         list.stream()
                 .forEach(System.out::println);

@@ -1,5 +1,7 @@
 package com.yearcon.pointshop.moudles.signin.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.persistence.Basic;
@@ -17,11 +19,22 @@ import java.sql.Date;
 @Data
 @Table(name = "shop_signin", schema = "dsdb")
 public class ShopSigninEntity {
+
+    @ApiModelProperty(hidden = true)
+    @JsonIgnore
     private int id;
+
+    @ApiModelProperty(hidden = true)
+    @JsonIgnore
     private String customerId;
+
+    @ApiModelProperty(value = "签到日期")
     private Date sginDate;
+    @ApiModelProperty(value = "获得积分")
     private Integer signPoint;
+    @ApiModelProperty(value = "积分余额")
     private Integer pointBalance;
+    @ApiModelProperty(value = "类型")
     private String type;
 
     @Id

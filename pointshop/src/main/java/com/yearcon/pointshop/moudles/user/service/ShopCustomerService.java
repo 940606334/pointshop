@@ -2,8 +2,12 @@ package com.yearcon.pointshop.moudles.user.service;
 
 import com.yearcon.pointshop.common.enums.ResultEnum;
 import com.yearcon.pointshop.common.exception.ShopException;
+import com.yearcon.pointshop.common.repository.mysql.shopconfig.ShopConfigRepository;
+import com.yearcon.pointshop.common.repository.mysql.user.ShopCodeRepository;
 import com.yearcon.pointshop.common.repository.mysql.user.ShopCustomerRepository;
 import com.yearcon.pointshop.common.vo.UserSupplementVO;
+import com.yearcon.pointshop.moudles.user.entity.ShopCodeEntity;
+import com.yearcon.pointshop.moudles.user.entity.ShopConfigEntity;
 import com.yearcon.pointshop.moudles.user.entity.ShopCustomerEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +23,12 @@ public class ShopCustomerService {
 
     @Autowired
     ShopCustomerRepository shopCustomerRepository;
+
+    @Autowired
+    ShopConfigRepository shopConfigRepository;
+
+    @Autowired
+    ShopCodeRepository shopCodeRepository;
 
 
     /**
@@ -79,7 +89,7 @@ public class ShopCustomerService {
         //设置用户信息
 
         //设置手机号
-        customerEntity.setPhone(userSupplementVO.getPhone());
+        //  customerEntity.setPhone(userSupplementVO.getPhone());
 
         //设置姓名
         customerEntity.setUsername(userSupplementVO.getUsername());
@@ -88,7 +98,7 @@ public class ShopCustomerService {
         customerEntity.setTaobaoId(userSupplementVO.getTaobaoId());
 
         //设置性别
-        customerEntity.setSex(userSupplementVO.getSex());
+        // customerEntity.setSex(userSupplementVO.getSex());
 
         //设置生日
         customerEntity.setBirthday(userSupplementVO.getBirthday());
@@ -104,6 +114,43 @@ public class ShopCustomerService {
             throw new ShopException(ResultEnum.SAVE_CUSTOMER_FAIL);
 
         }
+    }
+
+
+    public ShopConfigEntity getShopConfigEntity() {
+
+        ShopConfigEntity one = shopConfigRepository.findOne("1");
+        if (one == null) {
+
+            throw new ShopException(ResultEnum.CONFIG_NOT_EXIST);
+        }
+
+        return one;
+    }
+
+    public void saveShopCodeEntity(String phone, String code) {
+
+        ShopCodeEntity shopCodeEntity = shopCodeRepository.findOneByPhone(phone);
+        if (shopCodeEntity != null) {
+            shopCodeEntity.setPhone(phone);
+            shopCodeEntity.setCode(code);
+            shopCodeRepository.save(shopCodeEntity);
+            return;
+        }
+        ShopCodeEntity save = shopCodeRepository.save(new ShopCodeEntity(code, phone));
+        if (save == null) {
+
+            throw new ShopException(ResultEnum.SAVE_CODE_FAIL);
+        }
+    }
+
+
+    public String findByPhone(String phone) {
+        ShopCodeEntity shopCodeEntity = shopCodeRepository.findOneByPhone(phone);
+        if (shopCodeEntity == null) {
+            return "";
+        }
+        return shopCodeEntity.getCode();
     }
 
 

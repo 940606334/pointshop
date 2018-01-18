@@ -1,5 +1,7 @@
 package com.yearcon.pointshop.moudles.address.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.sun.org.apache.bcel.internal.generic.VariableLengthInstruction;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -18,18 +20,29 @@ import java.util.Objects;
 @Data
 @Table(name = "shop_shipping_address", schema = "dsdb")
 public class ShopShippingAddressEntity {
-//    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "收货地址id")
     private String id;
-    @ApiModelProperty(hidden = true)
+
+    @ApiModelProperty(value = "顾客id")
     private String customerId;
+
+    @ApiModelProperty(value = "省")
     private String province;
+    @ApiModelProperty(value = "市")
     private String city;
+    @ApiModelProperty(value = "区")
     private String area;
+    @ApiModelProperty(value = "完整收货地址")
     private String completeAddress;
+    @ApiModelProperty(value = "邮编")
     private String postcode;
+    @ApiModelProperty(value = "收货人姓名")
     private String name;
+    @ApiModelProperty(value = "手机号")
     private String mobile;
+    @ApiModelProperty(value = "是否是默认地址")
     private Integer isDefault;
+    @ApiModelProperty(value = "openid")
     private String openid;
 
     @Id

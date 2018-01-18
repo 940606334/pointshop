@@ -5,6 +5,7 @@ import com.yearcon.pointshop.common.vo.ShopSigninInfoVO;
 import com.yearcon.pointshop.moudles.signin.entity.ShopSigninEntity;
 import com.yearcon.pointshop.moudles.signin.service.ShopSigninService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -30,11 +32,12 @@ public class ShopSigninController {
 
 
     @ApiOperation(value = "获取签到记录", notes = "分页获取签到记录")
-    @RequestMapping(value = "/list", method = RequestMethod.POST)
-    public ShopResult<List<ShopSigninEntity>> findAll(@ApiParam(value = "起始页,从1开始") @RequestParam(value = "startPage", defaultValue = "1") Integer startPage,
+    @RequestMapping(value = "/list/{openid}", method = RequestMethod.POST)
+    public ShopResult<List<ShopSigninEntity>> findAll(@PathVariable(value = "openid") String openid,
+                                                      @ApiParam(value = "起始页,从1开始") @RequestParam(value = "startPage", defaultValue = "1") Integer startPage,
                                                       @ApiParam(value = "页大小") @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
 
-        List<ShopSigninEntity> list = shopSigninService.findAll(startPage, pageSize);
+        List<ShopSigninEntity> list = shopSigninService.findAll(startPage, pageSize, openid);
 
         return ShopResult.success(list);
     }
@@ -56,6 +59,17 @@ public class ShopSigninController {
         ShopSigninInfoVO infoVO = shopSigninService.info(openid);
 
         return ShopResult.success(infoVO);
+    }
+
+
+
+    @ApiOperation(value = "获取签到日期列表",notes = "通过openid获取该用户本月签到日期列表")
+    @RequestMapping(value = "/getSigninDateList/{openid}",method = RequestMethod.GET)
+    public ShopResult getSigninDateList(@PathVariable(value = "openid") String openid){
+
+        List<LocalDate> dates = shopSigninService.getSigninDateList(openid);
+
+        return ShopResult.success(dates);
     }
 
 

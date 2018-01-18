@@ -44,9 +44,9 @@ public class ShopShippingAddressController {
     }
 
 
-    @ApiOperation(value = "增加收货地址", notes = "增加一个收货地址,id 字段非必须")
+    @ApiOperation(value = "增加收货地址", notes = "增加一个收货地址,收货地址id非必须")
     @RequestMapping(value = "/save", method = RequestMethod.POST)
-    public ShopResult save(@RequestParam(value = "shippingAddressEntity") ShopShippingAddressEntity shippingAddressEntity) {
+    public ShopResult save(ShopShippingAddressEntity shippingAddressEntity) {
 
         ShopCustomerEntity customerEntity = shopCustomerService.findByOpenid(shippingAddressEntity.getOpenid());
         shippingAddressEntity.setCustomerId(customerEntity.getId());
@@ -60,9 +60,9 @@ public class ShopShippingAddressController {
 
     @ApiOperation(value = "修改收货地址", notes = "修改收货地址,所有字段都为必须")
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public ShopResult update(@RequestParam(value = "shippingAddressEntity") ShopShippingAddressEntity shippingAddressEntity) {
+    public ShopResult update(ShopShippingAddressEntity shippingAddressEntity) {
 
-        shippingAddressService.save(shippingAddressEntity);
+        shippingAddressService.update(shippingAddressEntity);
         return ShopResult.success();
     }
 
@@ -77,7 +77,7 @@ public class ShopShippingAddressController {
 
     @ApiOperation(value = "设置默认收货地址", notes = "设置默认收货地址,参数:收货地址id")
     @RequestMapping(value = "/set-default-address/{addressId}", method = RequestMethod.GET)
-    public ShopResult setDefault(@ApiParam("收货地址id") @PathVariable("addressId") String addressID) {
+    public ShopResult setDefault(@ApiParam("收货地址id") @PathVariable(value = "addressId") String addressID) {
 
         shippingAddressService.setDefault(addressID);
         return ShopResult.success();

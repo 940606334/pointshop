@@ -1,5 +1,6 @@
 package com.yearcon.pointshop.moudles.product.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -19,49 +20,213 @@ import java.util.Objects;
 @Data
 @Table(name = "shop_product", schema = "dsdb")
 public class ShopProductEntity {
+    /**
+     * 产品id
+     */
+    @ApiModelProperty(value = "产品id")
     private String id;
+    /**
+     *产品货号
+     */
+    @ApiModelProperty(value = "产品货号")
     private String productNo;
+    /**
+     * 品牌
+     */
+    @ApiModelProperty(value = "品牌")
     private String brand;
+    /**
+     *产品名称
+     */
+    @ApiModelProperty(value = "产品名称")
     private String name;
+    /**
+     * 上市年份
+     */
+    @ApiModelProperty(value = "上市年份")
     private String marketDate;
+    /**
+     * 分类表id
+     */
+    @ApiModelProperty(value = "分类表id")
     private String categoryId;
+    /**
+     * 访问量
+     */
+    @ApiModelProperty(value = "访问量")
     private Integer visits;
+    /**
+     *产品分类
+     */
+    @ApiModelProperty(value = "产品分类")
     private String productType;
+    /**
+     * 场合
+     */
+    @ApiModelProperty(value = "场合")
     private String occasion;
+    /**
+     *款式
+     */
+    @ApiModelProperty(value = "款式")
     private String size;
+    /**
+     *风格
+     */
+    @ApiModelProperty(value = "风格")
     private String style;
+    /**
+     *功能
+     */
+    @ApiModelProperty(value = "功能")
     private String function;
+    /**
+     *适用对象
+     */
+    @ApiModelProperty(value = "适用对象")
     private String target;
+    /**
+     *鞋面内里材质
+     */
+    @ApiModelProperty(value = "鞋面内里材质")
     private String vampTexture;
+    /**
+     *低帮鞋品名
+     */
+    @ApiModelProperty(value = "低帮鞋品名")
     private String lowShoesName;
+    /**
+     *鞋垫材质
+     */
+    @ApiModelProperty(value = "鞋垫材质")
     private String insoleTexture;
+    /**
+     *排序值
+     */
+
+    @ApiModelProperty(hidden = true)
+    @JsonIgnore
     private Integer sortNo;
+    /**
+     *关键词
+     */
+    @ApiModelProperty(hidden = true)
+    @JsonIgnore
     private String keyword;
+    /**
+     *产品摘要
+     */
+    @ApiModelProperty(value = "产品摘要")
     private String summary;
+    /**
+     *上架数量
+     */
+    @ApiModelProperty(value = "上架数量")
     private Integer stores;
+    /**
+     *零售价
+     */
+    @ApiModelProperty(value = "零售价")
     private Double price;
+    /**
+     *产品积分
+     */
+    @ApiModelProperty(value = "产品积分")
     private Integer points;
+    /**
+     *产品描述
+     */
+    @ApiModelProperty(value = "产品描述")
     private String description;
+    /**
+     *产品详情
+     */
+    @ApiModelProperty(value = "产品详情")
     private String details;
+    /**
+     *销量
+     */
+    @ApiModelProperty(value = "销量")
     private Integer sales;
+    /**
+     *产品剩余
+     */
+    @ApiModelProperty(value = "产品剩余")
     private Integer residue;
+    /**
+     *是否新品(0否/1是  默认0)
+     */
+    @ApiModelProperty(hidden = true)
+    @JsonIgnore
     private Integer isNew;
+    /**
+     *是否热门(0否/1是 默认为0)
+     */
+    @ApiModelProperty(hidden = true)
+    @JsonIgnore
     private Integer isHot;
+    /**
+     *上下架状态(0否/1是 默认1)
+     */
+    @ApiModelProperty(hidden = true)
+    @JsonIgnore
     private Integer isAlive;
+    /**
+     *产品图片/轮播图1
+     */
+    @ApiModelProperty(value = "产品图片/轮播图1")
     private String pictureUrlDefault;
+    /**
+     * 轮播图2
+     */
+    @ApiModelProperty(value = "轮播图2")
     private String pictureUrl2;
+    /**
+     *轮播图3
+     */
+    @ApiModelProperty(value = "轮播图3")
     private String pictureUrl3;
+    /**
+     *轮播图4
+     */
+    @ApiModelProperty(value = "轮播图4")
     private String pictureUrl4;
+    /**
+     *轮播图5
+     */
+    @ApiModelProperty(value = "轮播图5")
     private String pictureUrl5;
+    /**
+     *轮播图6
+     */
+    @ApiModelProperty(value = "轮播图6")
     private String pictureUrl6;
 
-
+    /**
+     *添加日期
+     */
+    @ApiModelProperty(value = "添加日期",dataType = "java.lang.String")
     private Timestamp addTime;
 
+    /**
+     *开始 产品积分
+     */
+    @ApiModelProperty(value = "开始 产品积分")
     private Integer beginPoints;
+    /**
+     *结束 产品积分
+     */
+    @ApiModelProperty(value = "开始 产品积分")
     private Integer endPoints;
+
+    @ApiModelProperty(hidden = true)
+    @JsonIgnore
     private int pageSize;
+    @ApiModelProperty(hidden = true)
+    @JsonIgnore
     private int pagenum;
+    @ApiModelProperty(hidden = true)
+    @JsonIgnore
     private int startIndex;
 
     @Id

@@ -14,4 +14,7 @@ public interface ShopProductSpecificationRepository extends JpaRepository<ShopPr
      */
     List<ShopProductSpecificationEntity> findAllByProductId(String productId);
 
+
+
+
 }

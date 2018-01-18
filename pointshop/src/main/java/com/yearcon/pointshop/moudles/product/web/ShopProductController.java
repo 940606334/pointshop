@@ -41,7 +41,7 @@ public class ShopProductController {
 
 
     @ApiOperation(value = "商品详情", notes = "通过id获取商品详情")
-    @RequestMapping(value = "/findOne/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ShopResult<ShopProductEntity> findOne(@ApiParam(value = "产品id") @PathVariable(name = "id") String id) {
 
         ShopProductEntity productEntity = shopProductService.findOne(id);
@@ -50,8 +50,8 @@ public class ShopProductController {
 
 
     @ApiOperation(value = "获取商品规格信息", notes = "通过商品id获取商品规格参数信息")
-    @RequestMapping(value = "/getSpecification/{productId}", method = RequestMethod.GET)
-    public ShopResult<List<ShopProductSpecificationEntity>> findAllByProductId(String productId) {
+    @RequestMapping(value = "/product-specification/{productId}", method = RequestMethod.GET)
+    public ShopResult<List<ShopProductSpecificationEntity>> findAllByProductId(@PathVariable(value = "productId") String productId) {
         List<ShopProductSpecificationEntity> list = shopProductService.findAllByProductId(productId);
         return ShopResult.success(list);
     }

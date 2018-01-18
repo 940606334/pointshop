@@ -37,4 +37,16 @@ public interface ShopShippingAddressRepository extends JpaRepository<ShopShippin
     List<ShopShippingAddressEntity> findAllByCustomerId(String customerId);
 
 
+    /**
+     * 通过 customerId 查找所有的收货地址
+     *
+     * @param isDefault
+     * @return
+     */
+    ShopShippingAddressEntity findAllByIsDefault(Integer isDefault);
+
+
+
+
+
 }

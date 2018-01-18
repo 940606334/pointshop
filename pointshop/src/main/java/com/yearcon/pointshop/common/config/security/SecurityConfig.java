@@ -34,6 +34,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) {
         web.ignoring().antMatchers(
+
+                // 允许所有请求访问 '/**' ,不再需要token安全校验
+                "/**",
                 //测试hello
                 "/user/hello",
                 //微信认证的url
@@ -61,8 +64,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 "/images/**",
                 "/**/favicon.ico");
     }
-
-
 
 
     @Override

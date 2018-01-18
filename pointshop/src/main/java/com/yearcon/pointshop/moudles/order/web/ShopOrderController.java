@@ -35,7 +35,7 @@ public class ShopOrderController {
 
     @ApiOperation(value = "生成订单",notes = "生成订单,所有字段都为必填,创建成功则返回 订单id")
     @RequestMapping(value = "/save-order",method = RequestMethod.POST)
-    public ShopResult<Map<String,String>> saveOrder(@RequestParam("orderDto")OrderDto orderDto){
+    public ShopResult<Map<String,String>> saveOrder(OrderDto orderDto){
 
 
         String orderId = shopOrderService.save(orderDto);

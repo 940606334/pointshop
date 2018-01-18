@@ -52,11 +52,12 @@ public class ShopProductService {
 
     /**
      * 分页查找商品
+     *
      * @param startIndex 起始页,从1开始
-     * @param pageSize 每页大小
+     * @param pageSize   每页大小
      * @return
      */
-    public  List<ShopProductEntity> findAll(int startIndex, int pageSize) {
+    public List<ShopProductEntity> findAll(int startIndex, int pageSize) {
 
         //按照排序字段进行排序
         Sort.Order sortNo = new Sort.Order(Sort.Direction.DESC, "sortNo");
@@ -70,7 +71,7 @@ public class ShopProductService {
         Sort sort = new Sort(orders);
 
 
-        Pageable pageable = new PageRequest(startIndex-1, pageSize,sort);
+        Pageable pageable = new PageRequest(startIndex - 1, pageSize, sort);
 
         Page<ShopProductEntity> page = shopProductRepository.findAll(pageable);
 
@@ -80,4 +81,14 @@ public class ShopProductService {
     }
 
 
+
+
+    public ShopProductSpecificationEntity findSpecificationEntity(String id){
+        ShopProductSpecificationEntity specificationEntity = shopProductSpecificationRepository.findOne(id);
+
+        if (specificationEntity==null){
+            throw new ShopException(ResultEnum.SPECIFICATION_NOT_EXIST);
+        }
+        return specificationEntity;
+    }
 }

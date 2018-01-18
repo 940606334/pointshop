@@ -20,9 +20,10 @@ public class CookieUtil {
      * @param value    cookie值
      * @param maxAge   过期时间
      */
-    public static void set(HttpServletResponse response, String name, String value, int maxAge) {
+    public static void set(HttpServletRequest request,HttpServletResponse response, String name, String value, int maxAge) {
         Cookie cookie = new Cookie(name, value);
         cookie.setPath("/");
+        cookie.setDomain("yearcon.com");
         cookie.setMaxAge(maxAge);
         response.addCookie(cookie);
     }

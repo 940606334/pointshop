@@ -4,11 +4,13 @@ import com.yearcon.pointshop.common.dto.OrderDto;
 import com.yearcon.pointshop.common.enums.ResultEnum;
 import com.yearcon.pointshop.common.exception.ShopException;
 import com.yearcon.pointshop.common.repository.mysql.order.ShopOrderRepository;
+import com.yearcon.pointshop.common.repository.mysql.product.ShopProductSpecificationRepository;
 import com.yearcon.pointshop.common.utils.Identities;
 import com.yearcon.pointshop.moudles.address.entity.ShopShippingAddressEntity;
 import com.yearcon.pointshop.moudles.address.service.ShopShippingAddressService;
 import com.yearcon.pointshop.moudles.order.entity.ShopOrderEntity;
 import com.yearcon.pointshop.moudles.product.entity.ShopProductEntity;
+import com.yearcon.pointshop.moudles.product.entity.ShopProductSpecificationEntity;
 import com.yearcon.pointshop.moudles.product.service.ShopProductService;
 import com.yearcon.pointshop.moudles.user.entity.ShopCustomerEntity;
 import com.yearcon.pointshop.moudles.user.service.ShopCustomerService;
@@ -41,6 +43,9 @@ public class ShopOrderService {
 
     @Autowired
     ShopCustomerService shopCustomerService;
+
+    @Autowired
+    ShopProductSpecificationRepository shopProductSpecificationRepository;
 
 
     /**
@@ -99,10 +104,11 @@ public class ShopOrderService {
         orderEntity.setConsigneeMobile(shippingAddressEntity.getMobile());
 
         //应付积分
-        orderEntity.setAmountPaid(orderDto.getProductAmount() * shopProductEntity.getPoints());
+        Integer needIntegration = shopProductService.findSpecificationEntity(orderDto.getProductSpecificationId()).getNeedIntegration();
+        orderEntity.setAmountPaid(orderDto.getProductAmount() * needIntegration);
 
         //实付积分
-        orderEntity.setAmountPaid(orderDto.getProductAmount() * shopProductEntity.getPoints());
+        orderEntity.setAmountPaid(orderDto.getProductAmount() * needIntegration);
 
         //设置发票要求
         orderEntity.setInvoiceRequest(orderDto.getInvoiceRequest());

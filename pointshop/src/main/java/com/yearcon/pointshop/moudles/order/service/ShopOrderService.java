@@ -12,6 +12,8 @@ import com.yearcon.pointshop.moudles.order.entity.ShopOrderEntity;
 import com.yearcon.pointshop.moudles.product.entity.ShopProductEntity;
 import com.yearcon.pointshop.moudles.product.entity.ShopProductSpecificationEntity;
 import com.yearcon.pointshop.moudles.product.service.ShopProductService;
+import com.yearcon.pointshop.moudles.signin.entity.ShopSigninEntity;
+import com.yearcon.pointshop.moudles.signin.service.ShopSigninService;
 import com.yearcon.pointshop.moudles.user.entity.ShopCustomerEntity;
 import com.yearcon.pointshop.moudles.user.service.ShopCustomerService;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sun.rmi.runtime.Log;
 
+import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -46,6 +49,9 @@ public class ShopOrderService {
 
     @Autowired
     ShopProductSpecificationRepository shopProductSpecificationRepository;
+
+    @Autowired
+    ShopSigninService shopSigninService;
 
 
     /**
@@ -140,6 +146,9 @@ public class ShopOrderService {
         //设置订单生成时间
         orderEntity.setAddTime(new Timestamp(System.currentTimeMillis()));
 
+        //设置支付状态(未支付)
+        orderEntity.setPayStatus(0);
+
         //保存订单
         ShopOrderEntity shopOrderEntity = shopOrderRepository.save(orderEntity);
 
@@ -199,6 +208,26 @@ public class ShopOrderService {
 
             throw new ShopException(ResultEnum.PAY_FAIL);
         }
+
+        //添加消费记录
+
+        ShopSigninEntity shopSigninEntity = new ShopSigninEntity();
+
+        //设置顾客id
+        shopSigninEntity.setCustomerId(customerId);
+        //设置添加消费记录日期
+        shopSigninEntity.setSginDate(new Date(System.currentTimeMillis()));
+        //设置消费积分
+        shopSigninEntity.setSignPoint(-amountPaid);
+        //设置积分余额
+        shopSigninEntity.setPointBalance(point-amountPaid);
+        //设置消费类型
+        shopSigninEntity.setType("积分兑换");
+
+        //保存消费记录
+        shopSigninService.save(shopSigninEntity);
+
+
     }
 
     /**

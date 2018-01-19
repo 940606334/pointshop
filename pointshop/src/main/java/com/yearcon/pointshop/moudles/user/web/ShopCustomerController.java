@@ -176,7 +176,7 @@ public class ShopCustomerController {
         return ShopResult.success();
     }
 
-    @ApiModelProperty(value = "获取用户表信息",notes = "通过openid获取用户表信息")
+    @ApiOperation(value = "获取用户表信息",notes = "通过openid获取用户表信息")
     @RequestMapping(value = "/getUserInfo/{openid}",method = RequestMethod.GET)
     public ShopResult<ShopCustomerEntity> getOne(@PathVariable("openid") String openid){
 

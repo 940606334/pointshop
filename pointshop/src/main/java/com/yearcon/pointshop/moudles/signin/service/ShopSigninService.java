@@ -48,6 +48,17 @@ public class ShopSigninService {
     ShopSigninConfigRepository shopSigninConfigRepository;
 
 
+
+
+    public void save(ShopSigninEntity entity){
+        ShopSigninEntity save = shopSigninRepository.save(entity);
+        if (save==null){
+            throw new ShopException(ResultEnum.RECORD_FAIL);
+
+        }
+    }
+
+
     /**
      * 分页查询签到记录
      *
@@ -298,7 +309,10 @@ public class ShopSigninService {
                 findAllByCustomerIdAndSginDateBetweenOrderBySginDateAsc(customerId, Date.valueOf(start), Date.valueOf(end));
 
         //总积分
-        Integer sum = list.stream().map(ShopSigninEntity::getSignPoint).reduce(0, Integer::sum);
+        Integer sum = list.stream()
+                .filter(entity -> entity.getSignPoint()>0)
+                .map(ShopSigninEntity::getSignPoint)
+                .reduce(0, Integer::sum);
 
         //本月签到日期
         List<LocalDate> dates = list.stream()
@@ -349,12 +363,7 @@ public class ShopSigninService {
 
         for (int i = 0; i < dates.size() - 1; i++) {
 
-            if (dates.size() == 1) {
-                number = 1;
-                return number;
-            }
-
-            if (dates.get(i).plusDays(1).isEqual(dates.get(i + 1))) {
+            if (dates.get(i).plusDays(1).isEqual(dates.get(i + 1))||dates.get(i).isEqual(dates.get(i + 1))) {
                 number++;
                 continue;
             } else {

@@ -32,6 +32,7 @@ public enum ResultEnum {
     SIGNIN_FAIL(117,"今天已经签到过了"),
     CONFIG_NOT_EXIST(118,"商城基本配置信息未找到"),
     SAVE_CODE_FAIL(119,"验证码失败"),
+    RECORD_FAIL(120,"添加消费记录失败"),
 
 
 

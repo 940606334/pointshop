@@ -8,6 +8,7 @@ import com.yearcon.pointshop.moudles.crm.entity.ShopCrmEntity;
 import com.yearcon.pointshop.moudles.crm.entity.ShopVipClassConfigEntity;
 import com.yearcon.pointshop.moudles.crm.service.ShopCrmService;
 import com.yearcon.pointshop.moudles.crm.service.ShopVipClassConfigService;
+import com.yearcon.pointshop.moudles.signin.entity.ShopSigninEntity;
 import com.yearcon.pointshop.moudles.signin.service.ShopSigninService;
 import com.yearcon.pointshop.moudles.user.entity.ShopCustomerEntity;
 import com.yearcon.pointshop.moudles.user.service.ShopCustomerService;
@@ -19,6 +20,7 @@ import org.springframework.util.StringUtils;
 import sun.rmi.runtime.Log;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -84,7 +86,7 @@ public class CrmTask {
                     shopCustomerService.save(shopCustomerEntity);
 
                     //添加积分变更记录
-                    shopSigninService.sginin(shopCustomerEntity.getOpenid(), "淘宝购物");
+                    saveSigninRecord(shopCustomerEntity, point, "淘宝购物");
 
 
                 }
@@ -92,7 +94,7 @@ public class CrmTask {
                 crmEntity.setTaobao(sum);
 
                 //根据总金额设置会员等级
-                crmEntity.setVipClass(getVipVlassByConfig(classConfigEntityList,sum));
+                crmEntity.setVipClass(getVipVlassByConfig(classConfigEntityList, sum));
 
                 //更新日期
                 crmEntity.setUpdateDate(new Date(System.currentTimeMillis()));
@@ -140,7 +142,7 @@ public class CrmTask {
                     shopCustomerService.save(shopCustomerEntity);
 
                     //添加积分变更记录
-                    shopSigninService.sginin(shopCustomerEntity.getOpenid(), "京东购物");
+                    saveSigninRecord(shopCustomerEntity, point, "京东购物");
 
 
                 }
@@ -151,7 +153,7 @@ public class CrmTask {
                 crmEntity.setUpdateDate(new Date(System.currentTimeMillis()));
 
                 //根据总金额设置会员等级
-                crmEntity.setVipClass(getVipVlassByConfig(classConfigEntityList,sum));
+                crmEntity.setVipClass(getVipVlassByConfig(classConfigEntityList, sum));
 
                 //保存 ShopCrmEntity
                 shopCrmService.save(crmEntity);
@@ -216,6 +218,20 @@ public class CrmTask {
 
 
         return "";
+    }
+
+
+    public ShopSigninEntity saveSigninRecord(ShopCustomerEntity shopCustomerEntity, Integer addPoint, String note) {
+
+        ShopSigninEntity shopSigninEntity = new ShopSigninEntity();
+        shopSigninEntity.setCustomerId(shopCustomerEntity.getId());
+        shopSigninEntity.setSignPoint(addPoint);
+        shopSigninEntity.setPointBalance(shopCustomerEntity.getPoint() + addPoint);
+        LocalDate localDate = LocalDate.now().minusDays(1);
+        shopSigninEntity.setSginDate(Date.valueOf(localDate));
+
+        return shopSigninEntity;
+
     }
 
 

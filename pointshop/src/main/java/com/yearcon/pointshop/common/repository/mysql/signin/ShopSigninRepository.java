@@ -25,6 +25,18 @@ public interface ShopSigninRepository extends JpaRepository<ShopSigninEntity,Int
     List<ShopSigninEntity> findAllByCustomerIdAndSginDateBetweenOrderBySginDateAsc(String customerId, Date startDate, Date endDate);
 
 
+
+    /**
+     * 通过用户id查找某用户一段时间内的签到记录,并按时间升序排序
+     * @param customerId
+     * @param startDate
+     * @param endDate
+     * @return
+     */
+    List<ShopSigninEntity> findAllByCustomerIdAndTypeAndSginDateBetweenOrderBySginDateAsc(String customerId,String type, Date startDate, Date endDate);
+
+
+
     /**
      * 通过 customerID 查找本月所有的签到信息
      * @param customerId

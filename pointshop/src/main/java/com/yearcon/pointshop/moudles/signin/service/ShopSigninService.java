@@ -162,7 +162,7 @@ public class ShopSigninService {
 
         Date startDate = Date.valueOf(startLocalDate);
         Date endDate = Date.valueOf(localDate);
-        List<ShopSigninEntity> list = shopSigninRepository.findAllByCustomerIdAndSginDateBetweenOrderBySginDateAsc(customerId, startDate, endDate);
+        List<ShopSigninEntity> list = shopSigninRepository.findAllByCustomerIdAndTypeAndSginDateBetweenOrderBySginDateAsc(customerId,"签到", startDate, endDate);
 
 
         //4. 开始计算本次签到积分值
@@ -266,7 +266,7 @@ public class ShopSigninService {
 
 
         List<ShopSigninEntity> list = shopSigninRepository.
-                findAllByCustomerIdAndSginDateBetweenOrderBySginDateAsc(customerId, Date.valueOf(start), Date.valueOf(end));
+                findAllByCustomerIdAndTypeAndSginDateBetweenOrderBySginDateAsc(customerId,"签到", Date.valueOf(start), Date.valueOf(end));
 
         //总积分
         Integer sum = list.stream().map(ShopSigninEntity::getSignPoint).reduce(0, Integer::sum);
@@ -310,12 +310,14 @@ public class ShopSigninService {
 
         //总积分
         Integer sum = list.stream()
+                .filter(entity-> entity.getType().equals("签到"))
                 .filter(entity -> entity.getSignPoint()>0)
                 .map(ShopSigninEntity::getSignPoint)
                 .reduce(0, Integer::sum);
 
         //本月签到日期
         List<LocalDate> dates = list.stream()
+                .filter(entity-> entity.getType().equals("签到"))
                 .map(ShopSigninEntity::getSginDate)
                 .map(date -> date.toLocalDate())
                 .collect(toList());
@@ -329,7 +331,7 @@ public class ShopSigninService {
 
 
         //设置本月签到天数
-        infoVO.setDaysMonth(list.size());
+        infoVO.setDaysMonth(dates.size());
 
 
         //设置签到获得的总积分
@@ -350,7 +352,7 @@ public class ShopSigninService {
      */
     public Integer getdaysOfMonth(List<LocalDate> dates) {
 
-        int number = 0;
+        int number = 1;
 
         if (dates.size() == 0) {
             return 0;
@@ -363,11 +365,11 @@ public class ShopSigninService {
 
         for (int i = 0; i < dates.size() - 1; i++) {
 
-            if (dates.get(i).plusDays(1).isEqual(dates.get(i + 1))||dates.get(i).isEqual(dates.get(i + 1))) {
+            if (dates.get(i).plusDays(1).isEqual(dates.get(i + 1))) {
                 number++;
                 continue;
             } else {
-                number = 0;
+                number = 1;
                 continue;
             }
         }

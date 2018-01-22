@@ -198,15 +198,6 @@ public class ShopCustomerController {
         Map<String, List<String>> map = shopCustomerService.getAccountByMobile(mobile);
 
 
-//        HashMap<String, List<String>> map = new HashMap<>();
-//        ArrayList<String> list = new ArrayList<>();
-////        list.add("李小光taobao");
-////        list.add("李小光taobao2");
-//        map.put("taobao", list);
-////
-//        ArrayList<String> list2 = new ArrayList<>();
-////        list2.add("李小光jd");
-//        map.put("jd", list2);
 
         return ShopResult.success(map);
     }

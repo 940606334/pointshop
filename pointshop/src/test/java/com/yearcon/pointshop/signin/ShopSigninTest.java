@@ -62,6 +62,18 @@ public class ShopSigninTest {
 
 
     @Test
+    public void findAllByCustomerIdAndTypeAndSginDateBetweenOrderBySginDateAsc() {
+        Date startDate = new Date(2018 - 1900, 1 - 1, 02);
+        Date endDate = new Date(2018 - 1900, 1 - 1, 20);
+        List<ShopSigninEntity> list = shopSigninRepository.findAllByCustomerIdAndTypeAndSginDateBetweenOrderBySginDateAsc("123", "签到",startDate, endDate);
+
+        log.info("list={}", list.size());
+        list.stream()
+                .forEach(System.out::println);
+    }
+
+
+    @Test
     public void calculatePoint() {
 
         Integer point = shopSigninService.calculatePoint("123");

@@ -28,7 +28,7 @@
             <!--日志路径名称-->
             <fileNamePattern>
                 <!--日志名称以日期命名,即每天一个日志文件-->
-                C:\shop-%d.log
+                /usr/log/shop-%d.log
             </fileNamePattern>
         </rollingPolicy>
     </appender>
@@ -47,7 +47,7 @@
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!--路径-->
             <fileNamePattern>
-                C:\shop-error-%d.log
+                /usr/log/shop-error-%d.log
             </fileNamePattern>
         </rollingPolicy>
     </appender>

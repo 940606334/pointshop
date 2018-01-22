@@ -352,7 +352,7 @@ public class ShopSigninService {
      */
     public Integer getdaysOfMonth(List<LocalDate> dates) {
 
-        int number = 1;
+        int number = 0;
 
         if (dates.size() == 0) {
             return 0;

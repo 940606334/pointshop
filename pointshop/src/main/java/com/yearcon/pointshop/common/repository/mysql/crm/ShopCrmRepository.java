@@ -12,5 +12,11 @@ public interface ShopCrmRepository extends JpaRepository<ShopCrmEntity,Integer> 
      */
     ShopCrmEntity findByOpenid(String openid);
 
+    /**
+     *通过 mobile 查找 crm信息
+     * @return
+     */
+    ShopCrmEntity findByMobile(String mobile);
+
 
 }

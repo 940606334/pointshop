@@ -48,4 +48,14 @@ public class ShopCrmTest {
 
 
 
+    @Test
+    public void test3(){
+        ShopCrmEntity shopCrmEntity = shopCrmRepository.findByMobile("17638166573");
+        log.info("shopCrmEntity={}",shopCrmEntity);
+
+
+    }
+
+
+
 }

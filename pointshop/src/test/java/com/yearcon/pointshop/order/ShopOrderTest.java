@@ -1,6 +1,7 @@
 package com.yearcon.pointshop.order;
 
 import com.yearcon.pointshop.common.dto.OrderDto;
+import com.yearcon.pointshop.common.repository.mysql.order.ShopOrderRepository;
 import com.yearcon.pointshop.moudles.order.entity.ShopOrderEntity;
 import com.yearcon.pointshop.moudles.order.service.ShopOrderService;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,21 @@ public class ShopOrderTest {
 
     @Autowired
     ShopOrderService shopOrderService;
+
+    @Autowired
+    ShopOrderRepository shopOrderRepository;
+
+
+
+    @Test
+    public void findAllShopOrderEntity(){
+
+        List<ShopOrderEntity> list = shopOrderRepository.findAllShopOrderEntity("4811007744a64ab08caa89ce3f531a2e");
+
+        log.info("list={}",list.toString());
+
+
+    }
 
 
     /**

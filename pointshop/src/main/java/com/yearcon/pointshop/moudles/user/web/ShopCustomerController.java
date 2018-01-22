@@ -33,7 +33,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -56,9 +58,6 @@ public class ShopCustomerController {
     ShopCrmService shopCrmService;
 
 
-
-
-
     /**
      * 发送手机验证码
      *
@@ -78,7 +77,7 @@ public class ShopCustomerController {
         Map<String, Object> map = new HashMap<>();
         map.put("userId", "H11868");
         map.put("password", "332516");
-        map.put("pszMobis",phone);
+        map.put("pszMobis", phone);
         map.put("pszMsg", "您正在注册意尔康会员，验证码是：" + code);
         map.put("iMobiCount", "1");
         map.put("pszSubPort", "*");
@@ -97,7 +96,7 @@ public class ShopCustomerController {
 
         //把验证码保存起来,这里存放数据库中
 
-        shopCustomerService.saveShopCodeEntity(phone,code);
+        shopCustomerService.saveShopCodeEntity(phone, code);
 
 
         return ShopResult.success();
@@ -134,7 +133,7 @@ public class ShopCustomerController {
         shopCustomerService.save(shopCustomerEntity);
 
         //绑定手机号成功, 把 token 和 openid 放入 Cookie 中
-        TokenAuthenticationService.addToken2Cookie(request,response, openid);
+        TokenAuthenticationService.addToken2Cookie(request, response, openid);
         return ShopResult.success();
     }
 
@@ -151,9 +150,10 @@ public class ShopCustomerController {
 
         //通过opneid 查找
         ShopCustomerEntity shopCustomerEntity = shopCustomerService.findByOpenid(openid);
+        //得到 商城基本配置信息
         ShopConfigEntity shopConfigEntity = shopCustomerService.getShopConfigEntity();
-        //通过手机号查找
-        ShopCrmEntity shopCrmEntity = shopCrmService.getByOpenid(openid);
+        //通过手机号查找 ShopCrm表数据
+        ShopCrmEntity shopCrmEntity = shopCrmService.findByMobile(shopCustomerEntity.getPhone());
 
         UserVO userVO = new UserVO(shopCustomerEntity.getPhone(),
                 shopCustomerEntity.getUsername(),
@@ -168,25 +168,59 @@ public class ShopCustomerController {
     }
 
 
-    @ApiOperation(value = "完善用户信息",notes = "完善用户信息")
-    @RequestMapping(value = "/info/{openid}",method = RequestMethod.POST)
-    public ShopResult info(@PathVariable(value = "openid")String openid, UserSupplementVO userSupplementVO){
+    @ApiOperation(value = "完善用户信息", notes = "完善用户信息")
+    @RequestMapping(value = "/info/{openid}", method = RequestMethod.POST)
+    public ShopResult info(@PathVariable(value = "openid") String openid, UserSupplementVO userSupplementVO) {
 
-        shopCustomerService.info(openid,userSupplementVO);
+        shopCustomerService.info(openid, userSupplementVO);
         return ShopResult.success();
     }
 
-    @ApiOperation(value = "获取用户表信息",notes = "通过openid获取用户表信息")
-    @RequestMapping(value = "/getUserInfo/{openid}",method = RequestMethod.GET)
-    public ShopResult<ShopCustomerEntity> getOne(@PathVariable("openid") String openid){
+    @ApiOperation(value = "获取用户表信息", notes = "通过openid获取用户表信息")
+    @RequestMapping(value = "/getUserInfo/{openid}", method = RequestMethod.GET)
+    public ShopResult<ShopCustomerEntity> getOne(@PathVariable("openid") String openid) {
 
         ShopCustomerEntity customerEntity = shopCustomerService.findByOpenid(openid);
 
         return ShopResult.success(customerEntity);
     }
 
+    /**
+     * 通过手机号获取 淘宝,京东账号信息
+     *
+     * @param mobile
+     * @return
+     */
+    @ApiOperation(value = "关联 淘宝,京东账号信息", notes = "通过手机号获取 淘宝,京东账号信息")
+    @RequestMapping(value = "/account/{mobile}", method = RequestMethod.GET)
+    public ShopResult<Map<String, List<String>>> getAccountByMobile(@ApiParam("手机号") @PathVariable(value = "mobile") String mobile) {
+
+        Map<String, List<String>> map = shopCustomerService.getAccountByMobile(mobile);
 
 
+//        HashMap<String, List<String>> map = new HashMap<>();
+//        ArrayList<String> list = new ArrayList<>();
+////        list.add("李小光taobao");
+////        list.add("李小光taobao2");
+//        map.put("taobao", list);
+////
+//        ArrayList<String> list2 = new ArrayList<>();
+////        list2.add("李小光jd");
+//        map.put("jd", list2);
+
+        return ShopResult.success(map);
+    }
+
+    @ApiOperation(value = "绑定淘宝京东账号", notes = "绑定淘宝京东账号")
+    @RequestMapping(value = "/bind/{openid}", method = RequestMethod.POST)
+    public ShopResult bindAccount(@PathVariable(value = "openid") String openid,
+                                  @ApiParam("账户类型(taobao或者jd)") @RequestParam(value = "type") String type,
+                                  @ApiParam("账号") @RequestParam(value = "account") String account) {
+
+        shopCustomerService.bind(openid, type, account);
+
+        return ShopResult.success();
+    }
 
 
 }

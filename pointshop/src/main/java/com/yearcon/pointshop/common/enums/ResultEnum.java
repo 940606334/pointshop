@@ -33,6 +33,11 @@ public enum ResultEnum {
     CONFIG_NOT_EXIST(118,"商城基本配置信息未找到"),
     SAVE_CODE_FAIL(119,"验证码失败"),
     RECORD_FAIL(120,"添加消费记录失败"),
+    SAVE_PRODUCT_FAIL(121,"保存商品销量失败"),
+    SAVE_PRODUCTSPECIFICATION_FAIL(122,"减库存失败"),
+    SHOPVIPCLASSCONFIG(123,"会员等级升级参数配置表信息未找到"),
+    PARAM_ERROR(124,"传递单参数 type 有误!"),
+
 
 
 

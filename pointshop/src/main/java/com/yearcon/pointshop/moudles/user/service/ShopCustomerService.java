@@ -2,15 +2,29 @@ package com.yearcon.pointshop.moudles.user.service;
 
 import com.yearcon.pointshop.common.enums.ResultEnum;
 import com.yearcon.pointshop.common.exception.ShopException;
+import com.yearcon.pointshop.common.repository.mysql.crm.PltJdCustomerRepository;
+import com.yearcon.pointshop.common.repository.mysql.crm.PltTaobaoCustomerRepository;
 import com.yearcon.pointshop.common.repository.mysql.shopconfig.ShopConfigRepository;
 import com.yearcon.pointshop.common.repository.mysql.user.ShopCodeRepository;
 import com.yearcon.pointshop.common.repository.mysql.user.ShopCustomerRepository;
+import com.yearcon.pointshop.common.vo.ShopResult;
 import com.yearcon.pointshop.common.vo.UserSupplementVO;
+import com.yearcon.pointshop.moudles.crm.entity.PltJdCustomerEntity;
+import com.yearcon.pointshop.moudles.crm.entity.PltTaobaoCustomerEntity;
 import com.yearcon.pointshop.moudles.user.entity.ShopCodeEntity;
 import com.yearcon.pointshop.moudles.user.entity.ShopConfigEntity;
 import com.yearcon.pointshop.moudles.user.entity.ShopCustomerEntity;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * 积分商城 顾客 service
@@ -29,6 +43,108 @@ public class ShopCustomerService {
 
     @Autowired
     ShopCodeRepository shopCodeRepository;
+
+    @Autowired
+    PltTaobaoCustomerRepository pltTaobaoCustomerRepository;
+
+    @Autowired
+    PltJdCustomerRepository pltJdCustomerRepository;
+
+
+    /**
+     * 查找所有用户信息
+     *
+     * @return
+     */
+    public List<ShopCustomerEntity> findAll() {
+
+
+        List<ShopCustomerEntity> list = shopCustomerRepository.findAll();
+
+
+        return list;
+    }
+
+
+    /**
+     * 通过手机号获取 淘宝,京东账号信息
+     *
+     * @param mobile
+     * @return
+     */
+    public Map<String, List<String>> getAccountByMobile(String mobile) {
+
+        List<PltTaobaoCustomerEntity> taobaoCustomerEntities = pltTaobaoCustomerRepository.findAllByMobile(mobile);
+
+        List<PltJdCustomerEntity> pltJdCustomerEntities = pltJdCustomerRepository.findAllByMobile(mobile);
+
+        List<String> taobaoIds = getTaobaoId(taobaoCustomerEntities);
+
+        List<String> jdIds = getJdId(pltJdCustomerEntities);
+
+        HashMap<String, List<String>> map = new HashMap<>();
+        map.put("taobao", taobaoIds);
+        map.put("jd", jdIds);
+
+
+        return map;
+    }
+
+
+    /**
+     * 绑定淘宝京东账号
+     */
+    public void bind(String openid, String type, String account) {
+
+        ShopCustomerEntity customerEntity = findByOpenid(openid);
+        if ("taobao".equals(type)) {
+            customerEntity.setTaobaoId(account);
+            save(customerEntity);
+            return;
+        }
+        if ("jd".equals(type)) {
+            customerEntity.setJdId(account);
+            save(customerEntity);
+            return;
+        }
+
+        throw new ShopException(ResultEnum.PARAM_ERROR);
+
+
+    }
+
+
+    public List<String> getJdId(List<PltJdCustomerEntity> pltJdCustomerEntities) {
+
+        if (pltJdCustomerEntities.size() == 0) {
+           // throw new ShopException(ResultEnum.JD_NO_CUSTOMER);
+            return new ArrayList<String>();
+        }
+        List<String> list = pltJdCustomerEntities.stream()
+                .map(PltJdCustomerEntity::getPin)
+                .collect(toList());
+
+        return list;
+
+    }
+
+
+    private List<String> getTaobaoId(List<PltTaobaoCustomerEntity> taobaoCustomerEntities) {
+
+        if (taobaoCustomerEntities.size() == 0) {
+
+            //throw new ShopException(ResultEnum.TAOBAO_NO_CUSTOMER);
+            return new ArrayList<String>();
+
+        }
+
+        List<String> list = taobaoCustomerEntities.stream()
+                .map(PltTaobaoCustomerEntity::getCustomerno)
+                .collect(toList());
+
+
+        return list;
+    }
 
 
     /**

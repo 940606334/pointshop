@@ -169,12 +169,16 @@ public class ShopOrderService {
      */
     public void pay(String orderId, String passwd) {
 
+
+
         //查找订单是否存在
         ShopOrderEntity orderEntity = shopOrderRepository.findOne(orderId);
         if (orderEntity == null) {
             log.info("【支付】：修改订单状态失败");
             throw new ShopException(ResultEnum.PAY_FAIL);
         }
+
+
 
 
         //密码是否正确
@@ -227,6 +231,18 @@ public class ShopOrderService {
         //保存消费记录
         shopSigninService.save(shopSigninEntity);
 
+        // 销量+1 ,库存-1
+        ShopProductEntity productEntity = shopProductService.findOne(orderEntity.getProductId());
+        productEntity.setSales(productEntity.getSales()+1);
+        ShopProductSpecificationEntity specificationEntity = shopProductService.findSpecificationEntity(orderEntity.getProductSpecificationId());
+        specificationEntity.setInventory(specificationEntity.getInventory()-1);
+
+        //保存商品
+        shopProductService.saveShopProduct(productEntity);
+        //保存商品规格
+        shopProductService.saveShopProductSpecification(specificationEntity);
+
+
 
     }
 
@@ -273,7 +289,9 @@ public class ShopOrderService {
 
         String customerId = customerEntity.getId();
 
-        List<ShopOrderEntity> list = shopOrderRepository.findAllByCustomerId(customerId);
+        List<ShopOrderEntity> list = shopOrderRepository.findAllShopOrderEntity(customerId);
+
+
 
         if (list.size() < 1) {
             throw new ShopException(ResultEnum.ORDER_NO);

@@ -81,8 +81,11 @@ public class ShopProductService {
     }
 
 
-
-
+    /**
+     * 通过商品规格id查找商品规格
+     * @param id
+     * @return
+     */
     public ShopProductSpecificationEntity findSpecificationEntity(String id){
         ShopProductSpecificationEntity specificationEntity = shopProductSpecificationRepository.findOne(id);
 
@@ -91,4 +94,35 @@ public class ShopProductService {
         }
         return specificationEntity;
     }
+
+
+    /**
+     * 保存商品信息
+     * @param entity
+     */
+    public void saveShopProduct(ShopProductEntity entity){
+
+        ShopProductEntity save = shopProductRepository.save(entity);
+        if (save==null){
+            throw new ShopException(ResultEnum.SAVE_PRODUCT_FAIL);
+        }
+
+    }
+
+    /**
+     * 保存商品规格信息
+     * @param entity
+     */
+    public void saveShopProductSpecification(ShopProductSpecificationEntity entity){
+
+        ShopProductSpecificationEntity save = shopProductSpecificationRepository.save(entity);
+        if(save==null){
+            throw new ShopException(ResultEnum.SAVE_PRODUCTSPECIFICATION_FAIL);
+
+        }
+
+    }
+
+
+
 }

@@ -45,7 +45,7 @@ public class ShopCustomerEntity {
     private String username;
 
     /**
-     * 关联的 淘宝账号
+     * 关联的 淘宝id
      */
     private String taobaoId;
     /**
@@ -68,12 +68,17 @@ public class ShopCustomerEntity {
      * 头像
      */
     private String headImage;
-    private Integer enabled;
     private Timestamp createDate;
     private Timestamp updateDate;
+    /**
+     * 关联的京东id
+     */
+    private String jdId;
+
+
 
     @Id
-    @Column(name = "id")
+    @Column(name = "id", nullable = false, length = 64)
     public String getId() {
         return id;
     }
@@ -83,7 +88,7 @@ public class ShopCustomerEntity {
     }
 
     @Basic
-    @Column(name = "point")
+    @Column(name = "point", nullable = true)
     public Integer getPoint() {
         return point;
     }
@@ -93,7 +98,7 @@ public class ShopCustomerEntity {
     }
 
     @Basic
-    @Column(name = "openid")
+    @Column(name = "openid", nullable = true, length = 50)
     public String getOpenid() {
         return openid;
     }
@@ -103,7 +108,7 @@ public class ShopCustomerEntity {
     }
 
     @Basic
-    @Column(name = "shipping_address_id")
+    @Column(name = "shipping_address_id", nullable = true)
     public Integer getShippingAddressId() {
         return shippingAddressId;
     }
@@ -113,7 +118,7 @@ public class ShopCustomerEntity {
     }
 
     @Basic
-    @Column(name = "pay_password")
+    @Column(name = "pay_password", nullable = true, length = 16)
     public String getPayPassword() {
         return payPassword;
     }
@@ -123,7 +128,7 @@ public class ShopCustomerEntity {
     }
 
     @Basic
-    @Column(name = "phone")
+    @Column(name = "phone", nullable = true, length = 15)
     public String getPhone() {
         return phone;
     }
@@ -133,7 +138,7 @@ public class ShopCustomerEntity {
     }
 
     @Basic
-    @Column(name = "username")
+    @Column(name = "username", nullable = true, length = 50)
     public String getUsername() {
         return username;
     }
@@ -143,7 +148,7 @@ public class ShopCustomerEntity {
     }
 
     @Basic
-    @Column(name = "taobao_id")
+    @Column(name = "taobao_id", nullable = true, length = 100)
     public String getTaobaoId() {
         return taobaoId;
     }
@@ -153,7 +158,7 @@ public class ShopCustomerEntity {
     }
 
     @Basic
-    @Column(name = "sex")
+    @Column(name = "sex", nullable = true, length = 5)
     public String getSex() {
         return sex;
     }
@@ -163,7 +168,7 @@ public class ShopCustomerEntity {
     }
 
     @Basic
-    @Column(name = "birthday")
+    @Column(name = "birthday", nullable = true, length = 20)
     public String getBirthday() {
         return birthday;
     }
@@ -173,7 +178,7 @@ public class ShopCustomerEntity {
     }
 
     @Basic
-    @Column(name = "address")
+    @Column(name = "address", nullable = true, length = 255)
     public String getAddress() {
         return address;
     }
@@ -183,7 +188,7 @@ public class ShopCustomerEntity {
     }
 
     @Basic
-    @Column(name = "size")
+    @Column(name = "size", nullable = true, length = 11)
     public String getSize() {
         return size;
     }
@@ -193,7 +198,7 @@ public class ShopCustomerEntity {
     }
 
     @Basic
-    @Column(name = "head_image")
+    @Column(name = "head_image", nullable = true, length = 255)
     public String getHeadImage() {
         return headImage;
     }
@@ -202,18 +207,10 @@ public class ShopCustomerEntity {
         this.headImage = headImage;
     }
 
-    @Basic
-    @Column(name = "enabled")
-    public Integer getEnabled() {
-        return enabled;
-    }
 
-    public void setEnabled(Integer enabled) {
-        this.enabled = enabled;
-    }
 
     @Basic
-    @Column(name = "create_date")
+    @Column(name = "create_date", nullable = true)
     public Timestamp getCreateDate() {
         return createDate;
     }
@@ -223,13 +220,23 @@ public class ShopCustomerEntity {
     }
 
     @Basic
-    @Column(name = "update_date")
+    @Column(name = "update_date", nullable = true)
     public Timestamp getUpdateDate() {
         return updateDate;
     }
 
     public void setUpdateDate(Timestamp updateDate) {
         this.updateDate = updateDate;
+    }
+
+    @Basic
+    @Column(name = "jd_id", nullable = true, length = 100)
+    public String getJdId() {
+        return jdId;
+    }
+
+    public void setJdId(String jdId) {
+        this.jdId = jdId;
     }
 
 

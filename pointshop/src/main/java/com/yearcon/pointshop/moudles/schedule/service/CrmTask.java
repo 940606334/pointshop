@@ -109,6 +109,8 @@ public class CrmTask {
                 //保存 ShopCrmEntity
                 shopCrmService.save(crmEntity);
 
+                log.info("同步用户【{}】的数据成功，新增消费金额={}",shopCustomerEntity.getPhone(),sum - crmEntity.getTaobao());
+
 
             }
 
@@ -170,6 +172,8 @@ public class CrmTask {
 
                 //保存 ShopCrmEntity
                 shopCrmService.save(crmEntity);
+
+                log.info("同步用户【{}】的数据成功,新增消费金额={}",shopCustomerEntity.getPhone(),sum - crmEntity.getJd());
 
 
             }

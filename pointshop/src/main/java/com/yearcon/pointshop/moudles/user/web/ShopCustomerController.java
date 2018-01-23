@@ -1,5 +1,6 @@
 package com.yearcon.pointshop.moudles.user.web;
 
+import com.yearcon.pointshop.common.anno.LoggerManage;
 import com.yearcon.pointshop.common.config.security.TokenAuthenticationService;
 import com.yearcon.pointshop.common.enums.ResultEnum;
 import com.yearcon.pointshop.common.exception.ShopException;
@@ -66,6 +67,7 @@ public class ShopCustomerController {
      */
     @ApiOperation(value = "发送验证码", notes = "发送验证码给手机号")
     @RequestMapping(value = "/sendCode/{phone}", method = {RequestMethod.GET})
+    @LoggerManage(logDescription = "发送验证码")
     public ShopResult sendCode(@ApiParam(value = "手机号", required = true) @PathVariable(name = "phone") String phone,
                                HttpSession httpSession) {
 
@@ -112,6 +114,7 @@ public class ShopCustomerController {
      */
     @ApiOperation(value = "用户注册", notes = "用户手机号注册,参数都为必填")
     @RequestMapping(value = "/register/{openid}", method = RequestMethod.POST)
+    @LoggerManage(logDescription = "用户注册")
     public ShopResult register(@PathVariable(name = "openid") String openid,
                                @ApiParam(value = "手机号", required = true) @RequestParam(name = "phone") String phone,
                                @ApiParam(value = "验证码", required = true) @RequestParam(name = "code") String code,
@@ -145,6 +148,7 @@ public class ShopCustomerController {
      */
     @ApiOperation(value = "获取用户信息", notes = "通过openid获取用户信息,")
     @RequestMapping(value = "/getuser/{openid}", method = RequestMethod.GET)
+    @LoggerManage(logDescription = "获取用户信息")
     public ShopResult<UserVO> getUserByOpenid(@PathVariable(name = "openid") String openid,
                                               HttpServletRequest request) {
 
@@ -170,6 +174,7 @@ public class ShopCustomerController {
 
     @ApiOperation(value = "完善用户信息", notes = "完善用户信息")
     @RequestMapping(value = "/info/{openid}", method = RequestMethod.POST)
+    @LoggerManage(logDescription = "完善用户信息")
     public ShopResult info(@PathVariable(value = "openid") String openid, UserSupplementVO userSupplementVO) {
 
         shopCustomerService.info(openid, userSupplementVO);
@@ -178,6 +183,7 @@ public class ShopCustomerController {
 
     @ApiOperation(value = "获取用户表信息", notes = "通过openid获取用户表信息")
     @RequestMapping(value = "/getUserInfo/{openid}", method = RequestMethod.GET)
+    @LoggerManage(logDescription = "获取用户表信息")
     public ShopResult<ShopCustomerEntity> getOne(@PathVariable("openid") String openid) {
 
         ShopCustomerEntity customerEntity = shopCustomerService.findByOpenid(openid);
@@ -193,6 +199,7 @@ public class ShopCustomerController {
      */
     @ApiOperation(value = "关联 淘宝,京东账号信息", notes = "通过手机号获取 淘宝,京东账号信息")
     @RequestMapping(value = "/account/{mobile}", method = RequestMethod.GET)
+    @LoggerManage(logDescription = "关联 淘宝,京东账号信息")
     public ShopResult<Map<String, List<String>>> getAccountByMobile(@ApiParam("手机号") @PathVariable(value = "mobile") String mobile) {
 
         Map<String, List<String>> map = shopCustomerService.getAccountByMobile(mobile);
@@ -204,6 +211,7 @@ public class ShopCustomerController {
 
     @ApiOperation(value = "绑定淘宝京东账号", notes = "绑定淘宝京东账号")
     @RequestMapping(value = "/bind/{openid}", method = RequestMethod.POST)
+    @LoggerManage(logDescription = "绑定淘宝京东账号")
     public ShopResult bindAccount(@PathVariable(value = "openid") String openid,
                                   @ApiParam("账户类型(taobao或者jd)") @RequestParam(value = "type") String type,
                                   @ApiParam("账号") @RequestParam(value = "account") String account) {

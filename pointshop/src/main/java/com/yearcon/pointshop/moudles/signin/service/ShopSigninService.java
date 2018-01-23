@@ -108,6 +108,8 @@ public class ShopSigninService {
      */
     public void sginin(String openid, String type) {
 
+
+
         ShopCustomerEntity customerEntity = shopCustomerService.findByOpenid(openid);
 
         ShopSigninEntity signinEntity = new ShopSigninEntity();
@@ -137,6 +139,8 @@ public class ShopSigninService {
         //增加用户签到的积分
         customerEntity.setPoint(customerEntity.getPoint() + signinEntity.getSignPoint());
         shopCustomerService.save(customerEntity);
+
+
 
 
     }

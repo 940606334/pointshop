@@ -1,5 +1,6 @@
 package com.yearcon.pointshop.moudles.address.web;
 
+import com.yearcon.pointshop.common.anno.LoggerManage;
 import com.yearcon.pointshop.common.vo.ShopResult;
 import com.yearcon.pointshop.moudles.address.entity.ShopShippingAddressEntity;
 import com.yearcon.pointshop.moudles.address.service.ShopShippingAddressService;
@@ -36,6 +37,7 @@ public class ShopShippingAddressController {
 
     @ApiOperation(value = "获取用户收货地址列表",notes = "通过openid获取改用户所有收货地址列表")
     @RequestMapping(value = "/{openid}",method = RequestMethod.GET)
+    @LoggerManage(logDescription = "获取用户收货地址列表")
     public ShopResult<List<ShopShippingAddressEntity>> getList(@PathVariable("openid") String openid){
         List<ShopShippingAddressEntity> list = shippingAddressService.findAllByOpenid(openid);
 
@@ -46,6 +48,7 @@ public class ShopShippingAddressController {
 
     @ApiOperation(value = "增加收货地址", notes = "增加一个收货地址,收货地址id非必须")
     @RequestMapping(value = "/save", method = RequestMethod.POST)
+    @LoggerManage(logDescription = "增加收货地址")
     public ShopResult save(ShopShippingAddressEntity shippingAddressEntity) {
 
         ShopCustomerEntity customerEntity = shopCustomerService.findByOpenid(shippingAddressEntity.getOpenid());
@@ -60,6 +63,7 @@ public class ShopShippingAddressController {
 
     @ApiOperation(value = "修改收货地址", notes = "修改收货地址,所有字段都为必须")
     @RequestMapping(value = "/update", method = RequestMethod.POST)
+    @LoggerManage(logDescription = "修改收货地址")
     public ShopResult update(ShopShippingAddressEntity shippingAddressEntity) {
 
         shippingAddressService.update(shippingAddressEntity);
@@ -69,6 +73,7 @@ public class ShopShippingAddressController {
 
     @ApiOperation(value = "删除一个收货地址", notes = "根据收货地址id删除一个收货地址")
     @RequestMapping(value = "/delete/{addressId}", method = RequestMethod.GET)
+    @LoggerManage(logDescription = "删除一个收货地址")
     public ShopResult delete(@PathVariable("addressId") String addressId) {
         shippingAddressService.delete(addressId);
 
@@ -77,6 +82,7 @@ public class ShopShippingAddressController {
 
     @ApiOperation(value = "设置默认收货地址", notes = "设置默认收货地址,参数:收货地址id")
     @RequestMapping(value = "/set-default-address/{addressId}", method = RequestMethod.GET)
+    @LoggerManage(logDescription = "设置默认收货地址")
     public ShopResult setDefault(@ApiParam("收货地址id") @PathVariable(value = "addressId") String addressID) {
 
         shippingAddressService.setDefault(addressID);

@@ -1,5 +1,6 @@
 package com.yearcon.pointshop.moudles.order.web;
 
+import com.yearcon.pointshop.common.anno.LoggerManage;
 import com.yearcon.pointshop.common.dto.OrderDto;
 import com.yearcon.pointshop.common.vo.ShopResult;
 import com.yearcon.pointshop.moudles.order.entity.ShopOrderEntity;
@@ -35,6 +36,7 @@ public class ShopOrderController {
 
     @ApiOperation(value = "生成订单",notes = "生成订单,所有字段都为必填,创建成功则返回 订单id")
     @RequestMapping(value = "/save-order",method = RequestMethod.POST)
+    @LoggerManage(logDescription = "生成订单")
     public ShopResult<Map<String,String>> saveOrder(OrderDto orderDto){
 
 
@@ -47,6 +49,7 @@ public class ShopOrderController {
 
     @ApiOperation(value = "获取所有订单信息",notes = "根据openid获取用户所有订单信息")
     @RequestMapping(value = "/getorder/{openid}",method = RequestMethod.GET)
+    @LoggerManage(logDescription = "获取所有订单信息")
     public ShopResult<List<ShopOrderEntity>> getOrder(@PathVariable("openid") String openid){
 
 
@@ -58,6 +61,7 @@ public class ShopOrderController {
 
     @ApiOperation(value = "查询单个订单信息",notes = "通过orderId 查询单个订单信息")
     @RequestMapping(value = "/getOrderByOrderId/{orderId}",method = RequestMethod.GET)
+    @LoggerManage(logDescription = "查询单个订单信息")
     public ShopResult<ShopOrderEntity> getOrderByOrderId(@PathVariable("orderId") String orderId){
         ShopOrderEntity shopOrderEntity = shopOrderService.findOne(orderId);
 
@@ -67,6 +71,7 @@ public class ShopOrderController {
 
     @ApiOperation(value = "订单支付",notes = "根据订单id 和支付密码进行支付")
     @RequestMapping(value = "/pay",method = RequestMethod.POST)
+    @LoggerManage(logDescription = "订单支付")
     public ShopResult pay(@ApiParam("订单id")@PathParam("orderId") String orderId,
                           @ApiParam("支付密码")@PathParam("payPassword") String payPassword){
 

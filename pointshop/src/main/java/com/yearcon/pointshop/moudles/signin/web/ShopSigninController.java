@@ -1,5 +1,6 @@
 package com.yearcon.pointshop.moudles.signin.web;
 
+import com.yearcon.pointshop.common.anno.LoggerManage;
 import com.yearcon.pointshop.common.vo.ShopResult;
 import com.yearcon.pointshop.common.vo.ShopSigninInfoVO;
 import com.yearcon.pointshop.moudles.signin.entity.ShopSigninEntity;
@@ -33,6 +34,7 @@ public class ShopSigninController {
 
     @ApiOperation(value = "获取签到记录", notes = "分页获取签到记录")
     @RequestMapping(value = "/list/{openid}", method = RequestMethod.POST)
+    @LoggerManage(logDescription = "获取签到记录")
     public ShopResult<List<ShopSigninEntity>> findAll(@PathVariable(value = "openid") String openid,
                                                       @ApiParam(value = "起始页,从1开始") @RequestParam(value = "startPage", defaultValue = "1") Integer startPage,
                                                       @ApiParam(value = "页大小") @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
@@ -45,6 +47,7 @@ public class ShopSigninController {
 
     @ApiOperation(value = "保存签到信息", notes = "通过 openid 保存用户签到信息")
     @RequestMapping(value = "/save/{openid}", method = RequestMethod.GET)
+    @LoggerManage(logDescription = "保存签到信息")
     public ShopResult signin(@PathVariable("openid") String openid) {
 
         shopSigninService.sginin(openid, "签到");
@@ -54,6 +57,7 @@ public class ShopSigninController {
 
     @ApiOperation(value = "签到信息", notes = "通过opneid 获取签到信息")
     @RequestMapping(value = "/info/{openid}", method = RequestMethod.GET)
+    @LoggerManage(logDescription = "签到信息")
     public ShopResult<ShopSigninInfoVO> info(@PathVariable("openid") String openid) {
 
         ShopSigninInfoVO infoVO = shopSigninService.info(openid);
@@ -65,6 +69,7 @@ public class ShopSigninController {
 
     @ApiOperation(value = "获取签到日期列表",notes = "通过openid获取该用户本月签到日期列表")
     @RequestMapping(value = "/getSigninDateList/{openid}",method = RequestMethod.GET)
+    @LoggerManage(logDescription = "获取签到日期列表")
     public ShopResult getSigninDateList(@PathVariable(value = "openid") String openid){
 
         List<LocalDate> dates = shopSigninService.getSigninDateList(openid);

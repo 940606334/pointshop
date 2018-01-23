@@ -1,5 +1,6 @@
 package com.yearcon.pointshop.moudles.weixin;
 
+import com.yearcon.pointshop.common.anno.LoggerManage;
 import com.yearcon.pointshop.common.config.security.TokenAuthenticationService;
 import com.yearcon.pointshop.common.enums.ResultEnum;
 import com.yearcon.pointshop.common.repository.mysql.shopconfig.ShopConfigRepository;
@@ -69,9 +70,9 @@ public class WeChatController {
      * @return
      * @throws UnsupportedEncodingException
      */
-    @ApiOperation(value = "微信网页授权", notes = "必须在微信客户端打开此链接. 如果已经注册过手机号则跳转到首页. 没有注册过跳转到注册页面" +
-            "返回状态码:1 表示跳转到首页. 返回状态码为: 2 . 表示要跳转到注册页面")
+    @ApiOperation(value = "微信网页授权", notes = "必须在微信客户端打开此链接. 如果已经注册过手机号则跳转到首页. 没有注册过跳转到注册页面")
     @RequestMapping(value = "/authorize", method = RequestMethod.GET)
+
     public String authorize(HttpServletRequest request, @RequestParam("indexUrl") String indexUrl) throws UnsupportedEncodingException {
 
         //1.得到请求的 服务器域名

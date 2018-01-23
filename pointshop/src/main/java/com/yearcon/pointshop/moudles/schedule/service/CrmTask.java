@@ -77,6 +77,13 @@ public class CrmTask {
 
                 //把金额存到shop_crm表中
                 ShopCrmEntity crmEntity = shopCrmService.getByOpenid(shopCustomerEntity.getOpenid());
+
+                if(crmEntity==null){
+                    crmEntity = new ShopCrmEntity();
+                    crmEntity.setOpenid(shopCustomerEntity.getOpenid());
+
+                }
+
                 //如果金额增加,需要加上相应积分值,包括 积分记录
                 if (sum > crmEntity.getTaobao()) {
                     //加上消费增加的积分值
@@ -134,6 +141,12 @@ public class CrmTask {
 
                 //把金额存到shop_crm表中
                 ShopCrmEntity crmEntity = shopCrmService.getByOpenid(shopCustomerEntity.getOpenid());
+
+                if(crmEntity==null){
+                    crmEntity = new ShopCrmEntity();
+                    crmEntity.setOpenid(shopCustomerEntity.getOpenid());
+
+                }
                 //如果金额增加,需要加上相应积分值,包括 积分记录
                 if (sum > crmEntity.getJd()) {
                     //加上消费增加的积分值
@@ -233,6 +246,9 @@ public class CrmTask {
         return shopSigninEntity;
 
     }
+
+
+
 
 
 }

@@ -148,6 +148,7 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
+					<finalName>pointshop</finalName>
 					<fork>true</fork>
 				</configuration>
 			</plugin>

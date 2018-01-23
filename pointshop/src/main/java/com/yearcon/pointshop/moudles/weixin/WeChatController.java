@@ -3,6 +3,7 @@ package com.yearcon.pointshop.moudles.weixin;
 import com.yearcon.pointshop.common.config.security.TokenAuthenticationService;
 import com.yearcon.pointshop.common.enums.ResultEnum;
 import com.yearcon.pointshop.common.repository.mysql.shopconfig.ShopConfigRepository;
+import com.yearcon.pointshop.common.repository.mysql.user.ShopCustomerRepository;
 import com.yearcon.pointshop.common.utils.Identities;
 import com.yearcon.pointshop.common.vo.ShopResult;
 import com.yearcon.pointshop.moudles.user.entity.ShopConfigEntity;
@@ -60,6 +61,9 @@ public class WeChatController {
     @Autowired
     private WxMpInMemoryConfigStorage wxMpInMemoryConfigStorage;
 
+    @Autowired
+    ShopCustomerRepository shopCustomerRepository;
+
     /**
      * @param request
      * @return
@@ -80,7 +84,8 @@ public class WeChatController {
         wxMpInMemoryConfigStorage.setSecret(shopConfigEntity.getSecret());
         wxMpService.setWxMpConfigStorage(wxMpInMemoryConfigStorage);
 
-        String redirectURI = "http://" + serverName + "/shop/weixin/userInfo";
+        String redirectURI ="http://dsjfcrm.yearcon.com"+ "/shop/weixin/userInfo";
+//        String redirectURI = "http://" + serverName + "/shop/weixin/userInfo";
 
         String index = URLEncoder.encode(indexUrl, "utf-8");
 
@@ -126,7 +131,7 @@ public class WeChatController {
         String openid = wxMpUser.getOpenId();
 
 //        查询 该 openid 是否存在数据库中.
-        ShopCustomerEntity shopCustomerEntity = shopCustomerService.findByOpenid(openid);
+        ShopCustomerEntity shopCustomerEntity = shopCustomerRepository.findByOpenid(openid);
         if (shopCustomerEntity == null) {
             ShopCustomerEntity customerEntity = new ShopCustomerEntity();
             customerEntity.setId(Identities.uuid2());

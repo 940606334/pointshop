@@ -48,11 +48,9 @@ public class ShopSigninService {
     ShopSigninConfigRepository shopSigninConfigRepository;
 
 
-
-
-    public void save(ShopSigninEntity entity){
+    public void save(ShopSigninEntity entity) {
         ShopSigninEntity save = shopSigninRepository.save(entity);
-        if (save==null){
+        if (save == null) {
             throw new ShopException(ResultEnum.RECORD_FAIL);
 
         }
@@ -66,7 +64,7 @@ public class ShopSigninService {
      * @param pageSize  页大小
      * @return
      */
-    public List<ShopSigninEntity> findAll(Integer startPage, Integer pageSize,String openid) {
+    public List<ShopSigninEntity> findAll(Integer startPage, Integer pageSize, String openid) {
 
         ShopCustomerEntity customerEntity = shopCustomerService.findByOpenid(openid);
 
@@ -83,7 +81,7 @@ public class ShopSigninService {
          * cb: 构建Predicate(断言)
          *
          */
-        Specification<ShopSigninEntity> specification = new Specification<ShopSigninEntity>(){
+        Specification<ShopSigninEntity> specification = new Specification<ShopSigninEntity>() {
             @Override
             public Predicate toPredicate(Root<ShopSigninEntity> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
                 Path path = root.get("customerId");
@@ -94,7 +92,7 @@ public class ShopSigninService {
             }
         };
 
-        Page<ShopSigninEntity> page = shopSigninRepository.findAll(specification,pageable);
+        Page<ShopSigninEntity> page = shopSigninRepository.findAll(specification, pageable);
         List<ShopSigninEntity> list = page.getContent();
 
         return list;
@@ -128,13 +126,17 @@ public class ShopSigninService {
         signinEntity.setSignPoint(calculatePoint(customerEntity.getId()));
 
         //设置积分余额(原来余额+此次签到获得的积分)
-        signinEntity.setPointBalance(customerEntity.getPoint() + signinEntity.getSignPoint());
+        signinEntity.setPointBalance((int) customerEntity.getPoint() + signinEntity.getSignPoint());
 
         ShopSigninEntity save = shopSigninRepository.save(signinEntity);
         if (save == null) {
             throw new ShopException(ResultEnum.SAVE_SIGNIN_POINT_FAIL);
 
         }
+
+        //增加用户签到的积分
+        customerEntity.setPoint(customerEntity.getPoint() + signinEntity.getSignPoint());
+        shopCustomerService.save(customerEntity);
 
 
     }
@@ -162,7 +164,7 @@ public class ShopSigninService {
 
         Date startDate = Date.valueOf(startLocalDate);
         Date endDate = Date.valueOf(localDate);
-        List<ShopSigninEntity> list = shopSigninRepository.findAllByCustomerIdAndTypeAndSginDateBetweenOrderBySginDateAsc(customerId,"签到", startDate, endDate);
+        List<ShopSigninEntity> list = shopSigninRepository.findAllByCustomerIdAndTypeAndSginDateBetweenOrderBySginDateAsc(customerId, "签到", startDate, endDate);
 
 
         //4. 开始计算本次签到积分值
@@ -248,10 +250,11 @@ public class ShopSigninService {
 
     /**
      * 通过openid获取该用户本月签到日期列表
+     *
      * @param openid
      * @return
      */
-    public List<LocalDate> getSigninDateList(String openid){
+    public List<LocalDate> getSigninDateList(String openid) {
 
         ShopCustomerEntity customerEntity = shopCustomerService.findByOpenid(openid);
 
@@ -266,7 +269,7 @@ public class ShopSigninService {
 
 
         List<ShopSigninEntity> list = shopSigninRepository.
-                findAllByCustomerIdAndTypeAndSginDateBetweenOrderBySginDateAsc(customerId,"签到", Date.valueOf(start), Date.valueOf(end));
+                findAllByCustomerIdAndTypeAndSginDateBetweenOrderBySginDateAsc(customerId, "签到", Date.valueOf(start), Date.valueOf(end));
 
         //总积分
         Integer sum = list.stream().map(ShopSigninEntity::getSignPoint).reduce(0, Integer::sum);
@@ -310,14 +313,14 @@ public class ShopSigninService {
 
         //总积分
         Integer sum = list.stream()
-                .filter(entity-> entity.getType().equals("签到"))
-                .filter(entity -> entity.getSignPoint()>0)
+                .filter(entity -> entity.getType().equals("签到"))
+                .filter(entity -> entity.getSignPoint() > 0)
                 .map(ShopSigninEntity::getSignPoint)
                 .reduce(0, Integer::sum);
 
         //本月签到日期
         List<LocalDate> dates = list.stream()
-                .filter(entity-> entity.getType().equals("签到"))
+                .filter(entity -> entity.getType().equals("签到"))
                 .map(ShopSigninEntity::getSginDate)
                 .map(date -> date.toLocalDate())
                 .collect(toList());

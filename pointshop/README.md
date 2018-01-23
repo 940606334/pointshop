@@ -97,6 +97,32 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 详见： http://blog.csdn.net/itguangit/article/details/78757782
 
+日志配置详见：logback-spring.xml .
+
+
+## 上线，部署，查看日志
+
+* 上线：
+
+需要把本项目使用maven 打成一个jar包。
+
+E:\idea\babaio-renren-security-renren-security-boot\积分商城--重构\pointshop> mvn clean package  -Dmaven.test.skip=true
+
+* 部署。
+
+首先使用winscp 把打好的jar包放到服务器的 /usr/local 目录下。
+
+然后运行该jar程序，使用命令：
+
+```
+nohup java -jar pointshop.jar --server.port=8082 &
+```
+server.port=8082 表示使用8082端口，所有输出都在 nohup.out 文件里面。
+
+* 查看日志： 
+
+日志文件在 `/usr/log/` 目录下，以每日的日期命名。遇到线上bug应首先查看日志。
+
 
 
 

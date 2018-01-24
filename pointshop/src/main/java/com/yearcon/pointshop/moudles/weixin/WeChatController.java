@@ -135,6 +135,8 @@ public class WeChatController {
         ShopCustomerEntity shopCustomerEntity = shopCustomerRepository.findByOpenid(openid);
         if (shopCustomerEntity == null) {
             ShopCustomerEntity customerEntity = new ShopCustomerEntity();
+            //初始化积分为零
+            customerEntity.setPoint(0);
             customerEntity.setId(Identities.uuid2());
             customerEntity.setOpenid(openid);
             customerEntity.setHeadImage(wxMpUser.getHeadImgUrl());

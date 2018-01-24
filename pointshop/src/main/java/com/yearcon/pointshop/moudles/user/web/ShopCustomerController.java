@@ -4,6 +4,7 @@ import com.yearcon.pointshop.common.anno.LoggerManage;
 import com.yearcon.pointshop.common.config.security.TokenAuthenticationService;
 import com.yearcon.pointshop.common.enums.ResultEnum;
 import com.yearcon.pointshop.common.exception.ShopException;
+import com.yearcon.pointshop.common.repository.mysql.crm.ShopCrmRepository;
 import com.yearcon.pointshop.common.repository.mysql.user.ShopCodeRepository;
 import com.yearcon.pointshop.common.utils.HttpClientUtil2;
 import com.yearcon.pointshop.common.utils.RandomCode;
@@ -57,6 +58,9 @@ public class ShopCustomerController {
 
     @Autowired
     ShopCrmService shopCrmService;
+
+    @Autowired
+    private ShopCrmRepository shopCrmRepository;
 
 
     /**
@@ -156,8 +160,14 @@ public class ShopCustomerController {
         ShopCustomerEntity shopCustomerEntity = shopCustomerService.findByOpenid(openid);
         //得到 商城基本配置信息
         ShopConfigEntity shopConfigEntity = shopCustomerService.getShopConfigEntity();
-        //通过手机号查找 ShopCrm表数据
-        ShopCrmEntity shopCrmEntity = shopCrmService.findByMobile(shopCustomerEntity.getPhone());
+        //通过openid查找 ShopCrm表数据,注意首次注册时查不到的情况
+        ShopCrmEntity shopCrmEntity = shopCrmRepository.findByOpenid(shopCustomerEntity.getOpenid());
+        if(shopCrmEntity==null){
+
+             shopCrmEntity = new ShopCrmEntity();
+             shopCrmEntity.setVipClass("普通会员");
+
+        }
 
         UserVO userVO = new UserVO(shopCustomerEntity.getPhone(),
                 shopCustomerEntity.getUsername(),
@@ -166,7 +176,6 @@ public class ShopCustomerController {
                 shopCustomerEntity.getPoint(),
                 shopConfigEntity.getCardUrl(),
                 shopConfigEntity.getVipExplain());
-
 
         return ShopResult.success(userVO);
     }

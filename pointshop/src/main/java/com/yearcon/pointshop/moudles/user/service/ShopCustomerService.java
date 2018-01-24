@@ -213,8 +213,11 @@ public class ShopCustomerService {
         //设置淘宝号
         customerEntity.setTaobaoId(userSupplementVO.getTaobaoId());
 
+        //设置京东账号
+        customerEntity.setJdId(userSupplementVO.getJdId());
+
         //设置性别
-        // customerEntity.setSex(userSupplementVO.getSex());
+         customerEntity.setSex(userSupplementVO.getSex());
 
         //设置生日
         customerEntity.setBirthday(userSupplementVO.getBirthday());

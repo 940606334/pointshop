@@ -29,6 +29,15 @@ public class UserSupplementVO {
     @ApiModelProperty(value = "淘宝账号")
     private String taobaoId;
     /**
+     * 关联的 京东账号
+     */
+    @ApiModelProperty(value = "京东账号")
+    private String jdId;
+
+
+
+
+    /**
      * 性别
      */
     @ApiModelProperty(value = "性别")

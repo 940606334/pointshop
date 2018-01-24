@@ -32,7 +32,7 @@ public class ShopCustomerRepositoryTest {
 
     @Test
     public void findByOpenid (){
-        ShopCustomerEntity shopCustomerEntity = shopCustomerRepository.findByOpenid("oaSr408dv6kyh3Ai9CdpBkDFmbDg");
+        ShopCustomerEntity shopCustomerEntity = shopCustomerService.findByOpenid("o7-qHwtoiViwOsgiWIEZE7nFDt9Y");
         System.out.println(shopCustomerEntity.toString());
 
     }

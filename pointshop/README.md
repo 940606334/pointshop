@@ -166,3 +166,7 @@ A--访问-->B  :B应用在 HttpReponse 中设置了两个 cookie, 分别是: ope
 然后,重点来了:
 
 我在A应用中用ajax 访问 B 应用时,在 request 中为什么没有 我刚才设置的两个 cookie 值
+
+## springboot 连接池wait_timeout超时设置
+
+https://www.cnblogs.com/xingzc/p/6022956.html

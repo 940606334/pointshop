@@ -219,15 +219,7 @@ public class ShopProductEntity {
     @ApiModelProperty(value = "开始 产品积分")
     private Integer endPoints;
 
-    @ApiModelProperty(hidden = true)
-    @JsonIgnore
-    private int pageSize;
-    @ApiModelProperty(hidden = true)
-    @JsonIgnore
-    private int pagenum;
-    @ApiModelProperty(hidden = true)
-    @JsonIgnore
-    private int startIndex;
+
 
     @Id
     @Column(name = "id")
@@ -610,34 +602,6 @@ public class ShopProductEntity {
         this.endPoints = endPoints;
     }
 
-    @Basic
-    @Column(name = "page_size")
-    public int getPageSize() {
-        return pageSize;
-    }
 
-    public void setPageSize(int pageSize) {
-        this.pageSize = pageSize;
-    }
-
-    @Basic
-    @Column(name = "pagenum")
-    public int getPagenum() {
-        return pagenum;
-    }
-
-    public void setPagenum(int pagenum) {
-        this.pagenum = pagenum;
-    }
-
-    @Basic
-    @Column(name = "start_index")
-    public int getStartIndex() {
-        return startIndex;
-    }
-
-    public void setStartIndex(int startIndex) {
-        this.startIndex = startIndex;
-    }
 
 }

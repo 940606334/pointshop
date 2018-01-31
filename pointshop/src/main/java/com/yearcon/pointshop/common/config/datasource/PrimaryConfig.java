@@ -20,13 +20,13 @@ import java.util.Map;
  * @author itguang
  * @create 2018-01-05 14:17
  **/
-@Configuration
-@EnableTransactionManagement
-@EnableJpaRepositories(
-        entityManagerFactoryRef = "entityManagerFactoryPrimary",//配置连接工厂 entityManagerFactory
-        transactionManagerRef = "transactionManagerPrimary", //配置 事物管理器  transactionManager
-        basePackages = {"com.yearcon.pointshop.common.repository.mysql"}//设置repository所在位置
-)
+//@Configuration
+//@EnableTransactionManagement
+//@EnableJpaRepositories(
+//        entityManagerFactoryRef = "entityManagerFactoryPrimary",//配置连接工厂 entityManagerFactory
+//        transactionManagerRef = "transactionManagerPrimary", //配置 事物管理器  transactionManager
+//        basePackages = {"com.yearcon.pointshop.common.repository.mysql"}//设置repository所在位置
+//)
 public class PrimaryConfig {
 
 

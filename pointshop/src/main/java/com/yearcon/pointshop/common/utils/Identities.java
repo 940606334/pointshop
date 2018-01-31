@@ -42,9 +42,9 @@ public class Identities {
      */
     public static String createIdByDate() {
         // 精确到毫秒
-        SimpleDateFormat fmt = new SimpleDateFormat("(yyyyMMddHHmmssSSS)");
+        SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMddHHmmssSSS");
         String suffix = fmt.format(new Date());
-        suffix = suffix + "-" + Math.round((Math.random() * 100000));
+        suffix = suffix  + Math.round((Math.random() * 100000));
         return suffix;
     }
 

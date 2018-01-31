@@ -21,12 +21,12 @@ import java.util.Map;
  * @create 2018-01-05 14:19
  **/
 
-@Configuration
-@EnableTransactionManagement
-@EnableJpaRepositories(
-        entityManagerFactoryRef="entityManagerFactorySecondary",
-        transactionManagerRef="transactionManagerSecondary",
-        basePackages= {"com.yearcon.pointshop.common.repository.crm"})
+//@Configuration
+//@EnableTransactionManagement
+//@EnableJpaRepositories(
+//        entityManagerFactoryRef="entityManagerFactorySecondary",
+//        transactionManagerRef="transactionManagerSecondary",
+//        basePackages= {"com.yearcon.pointshop.common.repository.crm"})
 public class SecondaryConfig {
 
     @Autowired

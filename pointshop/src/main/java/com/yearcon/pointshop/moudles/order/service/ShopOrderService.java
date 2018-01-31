@@ -74,7 +74,7 @@ public class ShopOrderService {
         orderEntity.setId(Identities.uuid2());
 
         //设置订单号
-        orderEntity.setOrderNumber(Identities.uuid2());
+        orderEntity.setOrderNumber(Identities.createIdByDate());
 
         //设置交易号
         orderEntity.setTransactionNo(Identities.uuid2());

@@ -141,6 +141,7 @@ public class WeChatController {
             customerEntity.setOpenid(openid);
             customerEntity.setHeadImage(wxMpUser.getHeadImgUrl());
             customerEntity.setUsername(wxMpUser.getNickname());
+            customerEntity.setPayPassword("123456");
             customerEntity.setSex(wxMpUser.getSex());
             customerEntity.setCreateDate(new Timestamp(System.currentTimeMillis()));
 

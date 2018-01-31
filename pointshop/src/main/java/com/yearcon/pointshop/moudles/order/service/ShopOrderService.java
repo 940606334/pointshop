@@ -74,7 +74,7 @@ public class ShopOrderService {
         orderEntity.setId(Identities.uuid2());
 
         //设置订单号
-        orderEntity.setOrderNumber(Identities.createIdByDate());
+        orderEntity.setOrderNumber(Identities.uuid2());
 
         //设置交易号
         orderEntity.setTransactionNo(Identities.uuid2());
@@ -233,8 +233,17 @@ public class ShopOrderService {
 
         // 销量+1 ,库存-1
         ShopProductEntity productEntity = shopProductService.findOne(orderEntity.getProductId());
-        productEntity.setSales(productEntity.getSales()+1);
+
+        Integer sales = productEntity.getSales();
+        if(sales==null){
+            sales = 1;
+
+        }
+
+        productEntity.setSales(sales+1);
+
         ShopProductSpecificationEntity specificationEntity = shopProductService.findSpecificationEntity(orderEntity.getProductSpecificationId());
+
         specificationEntity.setInventory(specificationEntity.getInventory()-1);
 
         //保存商品

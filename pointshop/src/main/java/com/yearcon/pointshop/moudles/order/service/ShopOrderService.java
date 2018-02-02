@@ -84,8 +84,12 @@ public class ShopOrderService {
         //设置顾客id
         orderEntity.setCustomerId(shippingAddressEntity.getCustomerId());
 
+
+        //设置规格和颜色
         //设置商品简介
-        orderEntity.setProductSimplename(shopProductEntity.getDescription());
+        String productSpecificationId = orderDto.getProductSpecificationId();
+        ShopProductSpecificationEntity one = shopProductSpecificationRepository.findOne(productSpecificationId);
+        orderEntity.setProductSimplename(one.getName()+","+one.getColor());
 
         //设置商品单价
         orderEntity.setPrice(shopProductEntity.getPrice());

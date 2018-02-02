@@ -26,6 +26,8 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.List;
 
+import static java.util.stream.Collectors.toList;
+
 /**
  * @author itguang
  * @create 2018-01-14 13:16
@@ -300,13 +302,17 @@ public class ShopOrderService {
 
         List<ShopOrderEntity> list = shopOrderRepository.findAllShopOrderEntity(customerId);
 
+        // 查找已付款订单
+       List<ShopOrderEntity> list1 = list.stream()
+               .filter(entity -> entity.getPayStatus() == 1)
+               .collect(toList());
 
 
-        if (list.size() < 1) {
+       if (list1.size() < 1) {
             throw new ShopException(ResultEnum.ORDER_NO);
         }
 
-        return list;
+        return list1;
 
 
     }
